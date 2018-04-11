@@ -5,3 +5,6 @@ obj
 .DS_Store
 xcuserdata
 *~
+local.properties
+build
+XibFreeKt.iml
