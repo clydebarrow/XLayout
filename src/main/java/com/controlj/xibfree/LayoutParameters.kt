@@ -30,7 +30,7 @@ import kotlin.math.roundToInt
 /// LayoutParameters declare how a view should be laid out by it's parent view group.
 /// </summary>
 
-class LayoutParameters(var width: Double = View.WRAP_CONTENT, var height: Double = View.WRAP_CONTENT, var weight: Double = 0.0, var margins: UIEdgeInsets = UIEdgeInsets.Zero(), var gravity: Gravity = Gravity.None) {
+class LayoutParameters(var width: Double = View.MATCH_PARENT, var height: Double = View.MATCH_PARENT, var weight: Double = 0.0, var margins: UIEdgeInsets = UIEdgeInsets.Zero(), var gravity: Gravity = Gravity.None) {
     enum class Units {
         /// <summary>
         /// Absolute pixel dimension

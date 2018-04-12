@@ -242,4 +242,12 @@ abstract class ViewGroup(layoutParameters: LayoutParameters = LayoutParameters(M
     interface IHost {
         fun getUIView(): UIView
     }
+
+    override fun onShown() {
+        subViews.forEach { it.onShown() }
+    }
+
+    override fun onHidden() {
+        subViews.forEach { it.onHidden() }
+    }
 }

@@ -63,4 +63,19 @@ class UILayoutHost(val layout: ViewGroup, frame: CGRect = CGRect.Zero()) : UIVie
     override fun getUIView(): UIView {
         return this
     }
+
+    /**
+     * Should be called by the enclosing UIViewController when the view becomes visible, e.g. from viewWillAppear
+     */
+    fun onShown() {
+        layout.onShown()
+    }
+
+    /**
+     * Should be called when the view becomes hidden, e.g. from viewDidDisappear
+     */
+    fun onHidden() {
+        layout.onHidden()
+    }
+
 }

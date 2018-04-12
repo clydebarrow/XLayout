@@ -26,7 +26,7 @@ import org.robovm.apple.uikit.UIView
  * Abstract base class for any item in the layout view hierarchy
  * @param layoutParameters The layout parameters for this view. The default is to wrap content
  */
-abstract class View(open var layoutParameters: LayoutParameters = LayoutParameters()) {
+abstract class View(open var layoutParameters: LayoutParameters = LayoutParameters()): ViewStateListener {
     companion object {
         /** Constants to use in width and height specifications to specify behaviour
          *
@@ -93,13 +93,13 @@ abstract class View(open var layoutParameters: LayoutParameters = LayoutParamete
     /**
      * Internal notification that this view has been attached to a hosting view
      */
-    internal open fun onAttach(host: ViewGroup.IHost) {
+    override fun onAttach(host: ViewGroup.IHost) {
     }
 
     /**
      * Internal notification that this view has been detached from a hosting view
      */
-    internal open fun onDetach() {
+    override fun onDetach() {
     }
 
     /**
@@ -213,5 +213,9 @@ abstract class View(open var layoutParameters: LayoutParameters = LayoutParamete
     var animate: Boolean = false
     var animationDuration: Double = 0.0
 
+    override fun onShown() {
+    }
 
+    override fun onHidden() {
+    }
 }
