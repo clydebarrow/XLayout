@@ -18,12 +18,17 @@
 package com.controlj.xibfree
 
 import com.controlj.xibfree.Gravity.Companion.None
+import com.controlj.xibfree.LayoutParameters.Companion.MATCH_PARENT
 import com.controlj.xibfree.LayoutParameters.Companion.MAX_DIMENSION
 import org.robovm.apple.coregraphics.CGRect
 import org.robovm.apple.coregraphics.CGSize
 
 /**
  * Created by clyde on 8/4/18.
+ *
+ * A FrameLayout layers its children into its own frame. The layoutparameters for each child will
+ * determine where in the FrameLayout the child appears. The position of each child is independent of
+ * all other children
  */
 class FrameLayout(layoutParameters: LayoutParameters = LayoutParameters(MATCH_PARENT, MATCH_PARENT)) : ViewGroup(layoutParameters) {
     var gravity = Gravity.TopLeft

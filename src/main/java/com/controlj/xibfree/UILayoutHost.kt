@@ -27,7 +27,7 @@ import org.robovm.apple.uikit.UIViewAutoresizing
  * UILayoutHost is the native UIView that hosts that XibFree layout
  */
 
-class UILayoutHost(val layout: ViewGroup, frame: CGRect = CGRect.Zero()) : UIView(frame), ViewGroup.IHost {
+class  UILayoutHost @JvmOverloads constructor(val layout: ViewGroup, frame: CGRect = CGRect.Zero()) : UIView(frame), ViewGroup.IHost {
     init {
         layout.host = this
         this.autoresizingMask = UIViewAutoresizing.with(

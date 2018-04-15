@@ -49,18 +49,31 @@ data class Gravity(val horizontal: Horizontal = Horizontal.None, val vertical: V
     companion object {
         @JvmStatic
         val None = Gravity(Horizontal.None, Vertical.None)
+        @JvmStatic
         val Center = Gravity(Horizontal.Center, Vertical.Center)
+        @JvmStatic
         val LeftTop = Gravity(Horizontal.Left, Vertical.Top)
+        @JvmStatic
         val RightTop = Gravity(Horizontal.Right, Vertical.Top)
+        @JvmStatic
         val RightBottom = Gravity(Horizontal.Right, Vertical.Bottom)
+        @JvmStatic
         val BottomRight = Gravity(Horizontal.Right, Vertical.Bottom)
+        @JvmStatic
         val TopLeft = Gravity(Horizontal.Left, Vertical.Top)
+        @JvmStatic
         val TopRight = Gravity(Horizontal.Right, Vertical.Top)
+        @JvmStatic
         val BottomLeft = Gravity(Horizontal.Left, Vertical.Bottom)
+        @JvmStatic
         val LeftBottom = Gravity(Horizontal.Left, Vertical.Bottom)
+        @JvmStatic
         val LeftMiddle = Gravity(Horizontal.Left, Vertical.Center)
+        @JvmStatic
         val RightMiddle = Gravity(Horizontal.Right, Vertical.Center)
+        @JvmStatic
         val CenterTop = Gravity(Horizontal.Center, Vertical.Top)
+        @JvmStatic
         val CenterBottom = Gravity(Horizontal.Center, Vertical.Top)
     }
 }

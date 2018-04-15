@@ -28,18 +28,6 @@ import org.robovm.apple.uikit.UIView
  */
 abstract class View(open var layoutParameters: LayoutParameters = LayoutParameters()): ViewStateListener {
     companion object {
-        /** Constants to use in width and height specifications to specify behaviour
-         *
-         */
-        /**
-         * Match the parent's size
-         */
-        const val MATCH_PARENT = -1.0
-        /**
-         * Make this dimension just big enough to contain the content
-         */
-        const val WRAP_CONTENT = -2.0
-
         @JvmStatic
         fun logMsg(format: String, vararg args: Any) {
             System.err.println(String.format(format, *args))
@@ -180,7 +168,7 @@ abstract class View(open var layoutParameters: LayoutParameters = LayoutParamete
 
     /**
      * Find the wrapper view for the given UIView
-     * @param A UIView of interest
+     * @param  uiView A UIView of interest
      * @return a NativeView wrapping the given UIView if found, else null
      */
     abstract fun findNativeView(uiView: UIView): NativeView?

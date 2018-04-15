@@ -30,7 +30,7 @@ import org.robovm.apple.uikit.UIView
  * @param layoutParameters The layout parameters to be applied to this group. Default is to match the parent.
  * @constructor Creates a group with the supplied list of subviews
  */
-abstract class ViewGroup(layoutParameters: LayoutParameters = LayoutParameters(MATCH_PARENT, MATCH_PARENT), vararg views: View) : View(layoutParameters) {
+abstract class ViewGroup(layoutParameters: LayoutParameters = LayoutParameters(LayoutParameters.MATCH_PARENT, LayoutParameters.MATCH_PARENT), vararg views: View) : View(layoutParameters) {
     init {
         addSubViews(*views)
     }
@@ -104,7 +104,7 @@ abstract class ViewGroup(layoutParameters: LayoutParameters = LayoutParameters(M
 
     /**
      * Add a collection of Views
-     * @param The collection of subviews to be added
+     * @param views The collection of subviews to be added
      */
 
     fun addSubViews(vararg views: View) {
@@ -190,7 +190,6 @@ abstract class ViewGroup(layoutParameters: LayoutParameters = LayoutParameters(M
         return layer
     }
 
-
     override fun onLayout(newPosition: CGRect, parentHidden: Boolean) {
         val newHidden = parentHidden || !visible
         if (layer != null) {
@@ -214,7 +213,7 @@ abstract class ViewGroup(layoutParameters: LayoutParameters = LayoutParameters(M
      * Remove a subview by index
      * @param index The index of the view to be removed
      */
-    fun removeSubview(index: Int) {
+    fun removeSubView(index: Int) {
         subViews.removeAt(index)
     }
 
@@ -223,20 +222,26 @@ abstract class ViewGroup(layoutParameters: LayoutParameters = LayoutParameters(M
      * @param view The view to be removed
      */
     fun removeSubView(view: View) {
-        removeSubview(subViews.indexOf(view))
+        removeSubView(subViews.indexOf(view))
     }
 
     /**
      * Remove a view wrapping the specified UIView
-     * @param The UIView whose wrapping View should be removed
+     * @param view The UIView whose wrapping View should be removed
      */
     fun removeSubView(view: UIView) {
         for (v in subViews) {
             if (v is NativeView && v.view == view) {
-                removeSubview(subViews.indexOf(v))
+                removeSubView(subViews.indexOf(v))
                 break
             }
         }
+    }
+
+    fun removeAllSubviews() {
+        val cnt = subViews.size
+        for(i in 0 until cnt)
+            removeSubView(cnt-i-1)
     }
 
     interface IHost {

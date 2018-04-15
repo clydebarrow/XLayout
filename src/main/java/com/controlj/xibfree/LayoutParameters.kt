@@ -1,7 +1,5 @@
 package com.controlj.xibfree
 
-import com.controlj.xibfree.View.Companion.MATCH_PARENT
-import com.controlj.xibfree.View.Companion.WRAP_CONTENT
 import com.controlj.xibfree.View.Companion.logMsg
 import org.robovm.apple.coregraphics.CGSize
 import org.robovm.apple.uikit.UIEdgeInsets
@@ -30,7 +28,10 @@ import kotlin.math.roundToInt
 /// LayoutParameters declare how a view should be laid out by it's parent view group.
 /// </summary>
 
-class LayoutParameters(var width: Double = View.MATCH_PARENT, var height: Double = View.MATCH_PARENT, var weight: Double = 0.0, var margins: UIEdgeInsets = UIEdgeInsets.Zero(), var gravity: Gravity = Gravity.None) {
+class LayoutParameters @JvmOverloads constructor(var width: Double = MATCH_PARENT, var height: Double = MATCH_PARENT, var weight: Double = 0.0, var margins: UIEdgeInsets = UIEdgeInsets.Zero(), var gravity: Gravity = Gravity.None) {
+    constructor(width: Double, height: Double, gravity: Gravity) : this(width, height, 0.0, gravity = gravity)
+    constructor(gravity: Gravity) : this(width = WRAP_CONTENT, height = WRAP_CONTENT, gravity = gravity)
+
     enum class Units {
         /// <summary>
         /// Absolute pixel dimension
@@ -74,9 +75,9 @@ class LayoutParameters(var width: Double = View.MATCH_PARENT, var height: Double
         }
         get() {
             if (_widthUnits == Units.Absolute) {
-                if (width == View.MATCH_PARENT)
+                if (width == MATCH_PARENT)
                     return Units.ParentRatio
-                if (width == View.WRAP_CONTENT)
+                if (width == WRAP_CONTENT)
                     return Units.ContentRatio
             }
             return _widthUnits
@@ -88,9 +89,9 @@ class LayoutParameters(var width: Double = View.MATCH_PARENT, var height: Double
         }
         get() {
             if (_heightUnits == Units.Absolute) {
-                if (height == View.MATCH_PARENT)
+                if (height == MATCH_PARENT)
                     return Units.ParentRatio
-                if (height == View.WRAP_CONTENT)
+                if (height == WRAP_CONTENT)
                     return Units.ContentRatio
             }
             return _heightUnits
@@ -129,7 +130,20 @@ class LayoutParameters(var width: Double = View.MATCH_PARENT, var height: Double
         }
 
     companion object {
+        /** Constants to use in width and height specifications to specify behaviour
+         *
+         */
+        /**
+         * Match the parent's size
+         */
+        const val MATCH_PARENT = -1.0
+        /**
+         * Make this dimension just big enough to contain the content
+         */
+        const val WRAP_CONTENT = -2.0
+
         val MAX_DIMENSION = Double.MAX_VALUE
+
         @JvmStatic
 
         fun dimToString(dim: Double): String {
