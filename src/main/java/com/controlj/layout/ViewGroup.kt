@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.controlj.xibfree
+package com.controlj.layout
 
 import org.robovm.apple.coreanimation.CALayer
 import org.robovm.apple.coreanimation.CATransaction
@@ -27,10 +27,10 @@ import org.robovm.apple.uikit.UIView
  *
  * This class maintains a collection of subviews. Implementations of this class will layout those subviews according
  * to some algorithm.
- * @param layoutParameters The layout parameters to be applied to this group. Default is to match the parent.
+ * @param layout The layout parameters to be applied to this group. Default is to match the parent.
  * @constructor Creates a group with the supplied list of subviews
  */
-abstract class ViewGroup(layoutParameters: LayoutParameters = LayoutParameters(LayoutParameters.MATCH_PARENT, LayoutParameters.MATCH_PARENT), vararg views: View) : View(layoutParameters) {
+abstract class ViewGroup(layout: Layout = Layout(), vararg views: View) : View(layout) {
     init {
         addSubViews(*views)
     }
@@ -39,6 +39,22 @@ abstract class ViewGroup(layoutParameters: LayoutParameters = LayoutParameters(L
      * The drawing layer
      */
     var layer: CALayer? = null
+        set(value) {
+            field?.removeFromSuperlayer()
+            field = value
+            if (value != null) {
+                val ourHost = host
+                if (ourHost != null) {
+                    val hostView = ourHost.getUIView()
+                    val nextLayer = findFirstSublayer()
+                    if (nextLayer != null)
+                        hostView.layer.insertSublayerBelow(value, nextLayer)
+                    else
+                        hostView.layer.addSublayer(value)
+
+                }
+            }
+        }
     /**
      * A tag that identifies this view
      */
@@ -67,7 +83,7 @@ abstract class ViewGroup(layoutParameters: LayoutParameters = LayoutParameters(L
      * of another group.
      */
 
-    var subViews: MutableList<View> = ArrayList<View>()
+    var childViews: MutableList<View> = ArrayList<View>()
         set(value) {
             for (v in value)
                 if (v.parent != null)
@@ -88,10 +104,10 @@ abstract class ViewGroup(layoutParameters: LayoutParameters = LayoutParameters(L
         if (view.parent != null)
             throw IllegalArgumentException("View is already a child of another ViewGroup")
         view.parent = this
-        if (position < 0 || position >= subViews.count())
-            subViews.add(view)
+        if (position < 0 || position >= childViews.count())
+            childViews.add(view)
         else
-            subViews.add(position, view)
+            childViews.add(position, view)
     }
 
     /**
@@ -117,36 +133,40 @@ abstract class ViewGroup(layoutParameters: LayoutParameters = LayoutParameters(L
      * Insert a native UIView at a given position.
      * @param position The desired position. If this is negative or greater than the current number of subviews, the view will be appended to the list
      * @param view The view to be added
-     * @param layoutParameters The layout parameters to be used for the subview
+     * @param layout The layout parameters to be used for the subview
      */
-    fun insertSubView(position: Int, view: UIView, layoutParameters: LayoutParameters) {
-        insertSubView(position, NativeView(view, layoutParameters))
+    fun insertSubView(position: Int, view: UIView, layout: Layout) {
+        insertSubView(position, NativeView(view, layout))
     }
 
     /**
      * Add a native UIView at the end of the subviews
      * @param view The view to be added
-     * @param layoutParameters The layout parameters to be used for the subview
+     * @param layout The layout parameters to be used for the subview
      */
-    fun addSubView(view: UIView, layoutParameters: LayoutParameters) {
-        insertSubView(-1, view, layoutParameters)
+    fun addSubView(view: UIView, layout: Layout) {
+        insertSubView(-1, view, layout)
+    }
+
+    fun addSubView(view: UIView, width: Double, height: Double) {
+        addSubView(view, Layout(Layout.Mode.Absolute, Layout.Mode.Absolute, width, height))
     }
 
     override fun onAttach(host: IHost) {
         if (layer != null)
             host.getUIView().layer.addSublayer(layer)
-        for (v in subViews)
+        for (v in childViews)
             v.onAttach(host)
     }
 
     override fun onDetach() {
         layer?.removeFromSuperlayer()
-        for (v in subViews)
+        for (v in childViews)
             v.onDetach()
     }
 
     override fun findFirstSublayer(): CALayer? {
-        for (v in subViews) {
+        for (v in childViews) {
             val l = v.getDisplayLayer()
             if (l != null)
                 return l
@@ -158,7 +178,7 @@ abstract class ViewGroup(layoutParameters: LayoutParameters = LayoutParameters(L
     }
 
     override fun findUIView(tag: Long): UIView? {
-        for (v in subViews) {
+        for (v in childViews) {
             val result = v.findUIView(tag)
             if (result != null)
                 return result
@@ -169,7 +189,7 @@ abstract class ViewGroup(layoutParameters: LayoutParameters = LayoutParameters(L
     override fun findLayoutView(tag: Long): View? {
         if (tag == this.tag)
             return this
-        for (subView in subViews) {
+        for (subView in childViews) {
             val result = subView.findLayoutView(tag)
             if (result != null)
                 return result
@@ -178,7 +198,7 @@ abstract class ViewGroup(layoutParameters: LayoutParameters = LayoutParameters(L
     }
 
     override fun findNativeView(uiView: UIView): NativeView? {
-        for (subview in subViews) {
+        for (subview in childViews) {
             val result = subview.findNativeView(uiView)
             if (result != null)
                 return result
@@ -204,7 +224,7 @@ abstract class ViewGroup(layoutParameters: LayoutParameters = LayoutParameters(L
                 layer!!.frame = newPosition
         }
         if (newHidden)
-            for (subView in subViews)
+            for (subView in childViews)
                 subView.layout(CGRect.Null(), false)
 
     }
@@ -214,7 +234,7 @@ abstract class ViewGroup(layoutParameters: LayoutParameters = LayoutParameters(L
      * @param index The index of the view to be removed
      */
     fun removeSubView(index: Int) {
-        subViews.removeAt(index)
+        childViews.removeAt(index)
     }
 
     /**
@@ -222,7 +242,7 @@ abstract class ViewGroup(layoutParameters: LayoutParameters = LayoutParameters(L
      * @param view The view to be removed
      */
     fun removeSubView(view: View) {
-        removeSubView(subViews.indexOf(view))
+        removeSubView(childViews.indexOf(view))
     }
 
     /**
@@ -230,18 +250,18 @@ abstract class ViewGroup(layoutParameters: LayoutParameters = LayoutParameters(L
      * @param view The UIView whose wrapping View should be removed
      */
     fun removeSubView(view: UIView) {
-        for (v in subViews) {
+        for (v in childViews) {
             if (v is NativeView && v.view == view) {
-                removeSubView(subViews.indexOf(v))
+                removeSubView(childViews.indexOf(v))
                 break
             }
         }
     }
 
     fun removeAllSubviews() {
-        val cnt = subViews.size
-        for(i in 0 until cnt)
-            removeSubView(cnt-i-1)
+        val cnt = childViews.size
+        for (i in cnt - 1..0)
+            removeSubView(i)
     }
 
     interface IHost {
@@ -249,10 +269,10 @@ abstract class ViewGroup(layoutParameters: LayoutParameters = LayoutParameters(L
     }
 
     override fun onShown() {
-        subViews.forEach { it.onShown() }
+        childViews.forEach { it.onShown() }
     }
 
     override fun onHidden() {
-        subViews.forEach { it.onHidden() }
+        childViews.forEach { it.onHidden() }
     }
 }

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.controlj.xibfree
+package com.controlj.layout
 
 import org.robovm.apple.coreanimation.CALayer
 import org.robovm.apple.coregraphics.CGRect
@@ -24,20 +24,14 @@ import org.robovm.apple.uikit.UIView
 
 /**
  * Abstract base class for any item in the layout view hierarchy
- * @param layoutParameters The layout parameters for this view. The default is to wrap content
+ * @param layout The layout parameters for this view. The default is to wrap content
  */
-abstract class View(open var layoutParameters: LayoutParameters = LayoutParameters()): ViewStateListener {
+abstract class View(open var layout: Layout = Layout()) : ViewStateListener {
     companion object {
         @JvmStatic
         fun logMsg(format: String, vararg args: Any) {
-            System.err.println(String.format(format, *args))
+            //System.err.println(String.format(format, *args))
         }
-    }
-
-    enum class Visibility {
-        VISIBLE,
-        INVISIBLE,
-        GONE
     }
 
     /**
@@ -49,6 +43,10 @@ abstract class View(open var layoutParameters: LayoutParameters = LayoutParamete
      */
     var column: Int = 0
 
+    /**
+     * A name mainly for debug use
+     */
+    var name: String = ""
     /**
      * The parent of this view
      */
@@ -138,14 +136,14 @@ abstract class View(open var layoutParameters: LayoutParameters = LayoutParamete
      */
     internal var measuredSize: CGSize = CGSize(-1.0, -1.0)
         set(size) {
-            if (layoutParameters.minWidth != 0.0 && size.width < layoutParameters.minWidth)
-                size.width = layoutParameters.minWidth
-            if (layoutParameters.minHeight != 0.0 && size.height < layoutParameters.minHeight)
-                size.height = layoutParameters.minHeight
-            if (layoutParameters.maxWidth != 0.0 && size.width > layoutParameters.maxWidth)
-                size.width = layoutParameters.maxWidth
-            if (layoutParameters.maxHeight != 0.0 && size.height > layoutParameters.maxHeight)
-                size.height = layoutParameters.maxHeight
+            if (layout.minWidth != 0.0 && size.width < layout.minWidth)
+                size.width = layout.minWidth
+            if (layout.minHeight != 0.0 && size.height < layout.minHeight)
+                size.height = layout.minHeight
+            if (layout.maxWidth != 0.0 && size.width > layout.maxWidth)
+                size.width = layout.maxWidth
+            if (layout.maxHeight != 0.0 && size.height > layout.maxHeight)
+                size.height = layout.maxHeight
             field = size
         }
 
@@ -176,19 +174,16 @@ abstract class View(open var layoutParameters: LayoutParameters = LayoutParamete
     /**
      * True if this view is not displayed and takes no space in the layout
      */
-    var gone: Boolean
-        get() = layoutParameters.visibility == Visibility.GONE
-        set(value) {
-            layoutParameters.visibility = if (value) Visibility.GONE else Visibility.VISIBLE
-        }
+    var gone: Boolean = false
 
     /**
      * True if this view is currently visible in the hierarchy
      */
-    var visible: Boolean
-        get() = layoutParameters.visibility == Visibility.VISIBLE
+    var visible: Boolean = true
+        get() = field && !gone
         set(value) {
-            layoutParameters.visibility = if (value) Visibility.VISIBLE else Visibility.INVISIBLE
+            field = value
+            gone = false
         }
 
     /**

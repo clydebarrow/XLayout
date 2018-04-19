@@ -25,8 +25,10 @@ repositories {
 
 ext {
     roboVMVersion = "2.3.4-SNAPSHOT"
-}
 
+}
+    roboVMVersion = "2.3.4-SNAPSHOT"
+kotlin_version = "1.2.31"
 robovm {
 }
 
@@ -34,7 +36,7 @@ dependencies {
     compile "com.mobidevelop.robovm:robovm-rt:${roboVMVersion}"
     compile "com.mobidevelop.robovm:robovm-cocoatouch:${roboVMVersion}"
     testCompile "junit:junit:4.12"
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlin_version}"
 }
 
 task wrapper(type: Wrapper) {

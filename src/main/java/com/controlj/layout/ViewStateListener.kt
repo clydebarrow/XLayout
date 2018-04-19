@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.controlj.xibfree
+package com.controlj.layout
 
 /**
  * This interface is implemented by View, and provides a way for a layout to inform its views when

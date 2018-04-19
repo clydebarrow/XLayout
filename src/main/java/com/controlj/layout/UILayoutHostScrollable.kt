@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.controlj.xibfree
+package com.controlj.layout
 
 import org.robovm.apple.coregraphics.CGPoint
 import org.robovm.apple.coregraphics.CGRect

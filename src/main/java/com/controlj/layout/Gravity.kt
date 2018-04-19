@@ -20,7 +20,7 @@
  * within a larger container
  */
 
-package com.controlj.xibfree
+package com.controlj.layout
 
 data class Gravity(val horizontal: Horizontal = Horizontal.None, val vertical: Vertical = Vertical.None) {
 
@@ -38,11 +38,11 @@ data class Gravity(val horizontal: Horizontal = Horizontal.None, val vertical: V
         Center,
     }
 
-    infix fun with(other: Gravity.Vertical): Gravity {
+    infix fun with(other: Vertical): Gravity {
         return Gravity(horizontal, other)
     }
 
-    infix fun with(other: Gravity.Horizontal): Gravity {
+    infix fun with(other: Horizontal): Gravity {
         return Gravity(other, vertical)
     }
 

@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-package com.controlj.xibfree
+package com.controlj.layout
 
-import com.controlj.xibfree.View.Companion.logMsg
+import com.controlj.layout.View.Companion.logMsg
 import org.robovm.apple.coregraphics.CGRect
 import org.robovm.apple.coregraphics.CGSize
 import org.robovm.apple.uikit.UIView
@@ -25,24 +25,25 @@ import org.robovm.apple.uikit.UIViewAutoresizing
 
 /**
  * UILayoutHost is the native UIView that hosts that XibFree layout
+ * It acts as a FrameLayout with one child, i.e. the child will fill the frame of this view
  */
 
-class  UILayoutHost @JvmOverloads constructor(val layout: ViewGroup, frame: CGRect = CGRect.Zero()) : UIView(frame), ViewGroup.IHost {
+class  UILayoutHost @JvmOverloads constructor(val viewGroup: ViewGroup, frame: CGRect = CGRect.Zero()) : UIView(frame), ViewGroup.IHost {
     init {
-        layout.host = this
+        viewGroup.host = this
         this.autoresizingMask = UIViewAutoresizing.with(
                 UIViewAutoresizing.FlexibleWidth, UIViewAutoresizing.FlexibleHeight)
     }
 
     fun findNativeView(view: UIView): NativeView? {
-        return layout.findNativeView(view)
+        return viewGroup.findNativeView(view)
     }
 
     override fun getSizeThatFits(size: CGSize): CGSize {
 
         // Measure the layout
         logMsg("UILayoutHost.sizethatfits, size=%s", size)
-        return layout.measure(size.width, size.height)
+        return viewGroup.measure(size.width - viewGroup.layout.margins.totalWidth(), size.height - viewGroup.layout.margins.totalHeight())
     }
 
     /// <Docs>Lays out subviews.</Docs>
@@ -52,10 +53,19 @@ class  UILayoutHost @JvmOverloads constructor(val layout: ViewGroup, frame: CGRe
     override fun layoutSubviews() {
         // Remeasure
         logMsg("UILayoutHost.layoutSubViews, bounds=%s", bounds)
-        layout.measure(bounds.width, bounds.height)
-        layout.layout(bounds, false)
-
+        val newSize = viewGroup.measure(bounds.width - viewGroup.layout.margins.totalWidth(), bounds.height - viewGroup.layout.margins.totalHeight())
+        logMsg("UILayouthost: newSize = $newSize, bounds = $bounds, frame=$frame")
+        val size = viewGroup.measuredSize
+        val subViewPosition = bounds.applyInsets(viewGroup.layout.margins).applyGravity(size, viewGroup.layout.gravity)
+        logMsg("subviewPosition = $subViewPosition ")
+        viewGroup.layout(subViewPosition, false)
         didLayoutAction?.invoke()
+    }
+
+    override fun willMoveToSuperview(superView: UIView?) {
+        super.willMoveToSuperview(superView)
+        if(superView != null)
+            frame = superView.bounds
     }
 
     var didLayoutAction: (() -> Unit?)? = null
@@ -68,14 +78,14 @@ class  UILayoutHost @JvmOverloads constructor(val layout: ViewGroup, frame: CGRe
      * Should be called by the enclosing UIViewController when the view becomes visible, e.g. from viewWillAppear
      */
     fun onShown() {
-        layout.onShown()
+        viewGroup.onShown()
     }
 
     /**
      * Should be called when the view becomes hidden, e.g. from viewDidDisappear
      */
     fun onHidden() {
-        layout.onHidden()
+        viewGroup.onHidden()
     }
 
 }

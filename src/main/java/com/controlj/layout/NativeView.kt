@@ -20,7 +20,7 @@
  * it the XibFree's layout logic
  */
 
-package com.controlj.xibfree
+package com.controlj.layout
 
 import org.robovm.apple.coreanimation.CALayer
 import org.robovm.apple.coregraphics.CGRect
@@ -28,12 +28,12 @@ import org.robovm.apple.coregraphics.CGSize
 import org.robovm.apple.uikit.UIView
 import org.robovm.apple.uikit.UIViewAutoresizing
 
-open class NativeView(view: UIView, layoutParameters: LayoutParameters = LayoutParameters()) : View(layoutParameters) {
-    override var layoutParameters: LayoutParameters = layoutParameters
+open class NativeView(view: UIView, layout: Layout = Layout()) : View(layout) {
+    override var layout: Layout = layout
         get() {
             if (view is UILayoutHost)
-                return (view as UILayoutHost).layout.layoutParameters
-            return super.layoutParameters
+                return (view as UILayoutHost).viewGroup.layout
+            return super.layout
         }
 
     /**
@@ -72,7 +72,7 @@ open class NativeView(view: UIView, layoutParameters: LayoutParameters = LayoutP
      * Called when a layout pass is being done. onMeasure will have been previously called
      */
     override fun onLayout(newPosition: CGRect, parentHidden: Boolean) {
-        logMsg("NativeView(%s) onLayout = %s", view.javaClass.superclass.simpleName, newPosition)
+        logMsg("$name: NativeView(%s) onLayout = %s", view.javaClass.simpleName, newPosition)
         view.isHidden = parentHidden || !visible
         if (parent != null && parent!!.animate) {
             /*
@@ -97,21 +97,21 @@ open class NativeView(view: UIView, layoutParameters: LayoutParameters = LayoutP
      */
     override fun onMeasure(parentWidth: Double, parentHeight: Double) {
         // Resolve width for absolute and parent ratio
-        logMsg("NativeView(%s).onMeasure(%g, %g), layoutParameters = %s", view.javaClass.superclass.simpleName, parentWidth, parentHeight, layoutParameters)
-        val width = layoutParameters.tryResolveWidth(this, parentWidth, parentHeight)
-        val height = layoutParameters.tryResolveHeight(this, parentWidth, parentHeight)
-        logMsg("NativeView(%s) after resolve: %g, %g", view.javaClass.superclass.simpleName, width, height)
+        logMsg("$name: NativeView(%s).onMeasure(%s, %s), layoutParameters = %s", view.javaClass.superclass.simpleName, Layout.dimToString(parentWidth), Layout.dimToString(parentHeight), layout)
+        val width = layout.tryResolveWidth(parentWidth)
+        val height = layout.tryResolveHeight(parentHeight)
+        logMsg("$name: NativeView(%s) after resolve: %s, %s", view.javaClass.simpleName, Layout.dimToString(width), Layout.dimToString(height))
 
         // Do we need to measure our content?
         var sizeMeasured = CGSize.Zero()
-        if (width == LayoutParameters.MAX_DIMENSION || height == LayoutParameters.MAX_DIMENSION) {
+        if (width == Layout.MAX_DIMENSION || height == Layout.MAX_DIMENSION) {
             val size = view.getSizeThatFits(CGSize(width, height))
-            logMsg("getSizeThatFits returned %s", size)
+            logMsg("$name: getSizeThatFits returned %s", size)
             sizeMeasured = measurer(view, size)
         }
 
         // Set the measured size
-        measuredSize = layoutParameters.resolveSize(CGSize(width, height), sizeMeasured)
+        measuredSize = layout.resolveSize(CGSize(width, height), sizeMeasured)
         logMsg("NativeView(%s) onmeasure = %s", view.javaClass.superclass.simpleName, measuredSize)
     }
 
@@ -168,4 +168,6 @@ open class NativeView(view: UIView, layoutParameters: LayoutParameters = LayoutP
     override fun findFirstSublayer(): CALayer? {
         return null
     }
+
+
 }

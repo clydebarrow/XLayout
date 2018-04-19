@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.controlj.xibfree
+package com.controlj.layout
 
 import org.robovm.apple.coregraphics.CGRect
 import org.robovm.apple.coregraphics.CGSize
@@ -41,19 +41,19 @@ fun CGRect.applyInsets(insets: UIEdgeInsets): CGRect {
 fun List<View>.maxWidth(): Double {
     var width = 0.0
     for (v in this)
-        width = Math.max(width, v.measuredSize.width + v.layoutParameters.margins.totalWidth())
+        width = Math.max(width, v.measuredSize.width + v.layout.margins.totalWidth())
     return width
 }
 
 fun List<View>.maxHeight(): Double {
     var height = 0.0
     for (v in this)
-        height = Math.max(height, v.measuredSize.height + v.layoutParameters.margins.totalHeight())
+        height = Math.max(height, v.measuredSize.height + v.layout.margins.totalHeight())
     return height
 }
 
 fun CGSize.asSizeString(): String {
-    return "{${LayoutParameters.dimToString(width)}, ${LayoutParameters.dimToString(height)}}"
+    return "{${Layout.dimToString(width)}, ${Layout.dimToString(height)}}"
 }
 
 fun CGSize.applyPadding(padding: UIEdgeInsets): CGSize {
