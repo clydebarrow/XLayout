@@ -151,6 +151,10 @@ data class Layout(
         fun build(): Layout {
             if(layout.widthMode == Mode.Weighted && layout.heightMode == Mode.Weighted)
                 fail("Only one axis can be weighted")       // TODO allow this for other layouts maybe?
+            if(!widthSet && layout.width != 0.0)
+                layout.widthMode = Mode.Absolute
+            if(!heightSet && layout.height != 0.0)
+                layout.heightMode = Mode.Absolute
             return layout
         }
     }

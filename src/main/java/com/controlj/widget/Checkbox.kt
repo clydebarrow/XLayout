@@ -16,6 +16,7 @@
 
 package com.controlj.widget
 
+import com.controlj.layout.View.Companion.logMsg
 import org.robovm.apple.coregraphics.CGPoint
 import org.robovm.apple.coregraphics.CGRect
 import org.robovm.apple.uikit.UIBezierPath
@@ -40,11 +41,16 @@ class Checkbox : UIControl() {
 
     init {
         backgroundColor = UIColor.clear()
+        setUserInteractionEnabled(true)     // don't use property syntax
     }
+
     override fun draw(rect: CGRect) {
-        drawOutline(rect);
-        if(checked)
-            drawCheck(rect)
+        logMsg("ishidden = $isHidden: ")
+        if(!isHidden()) {
+            drawOutline(rect);
+            if (checked)
+                drawCheck(rect)
+        }
     }
 
     private fun drawOutline(rect: CGRect) {

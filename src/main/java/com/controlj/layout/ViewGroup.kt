@@ -144,7 +144,7 @@ abstract class ViewGroup(layout: Layout = Layout(), vararg views: View) : View(l
      * @param view The view to be added
      * @param layout The layout parameters to be used for the subview
      */
-    fun addSubView(view: UIView, layout: Layout) {
+    fun addSubView(view: UIView, layout: Layout = Layout()) {
         insertSubView(-1, view, layout)
     }
 
