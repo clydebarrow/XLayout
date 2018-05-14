@@ -17,7 +17,6 @@
 
 package com.controlj.layout
 
-import com.controlj.layout.View.Companion.logMsg
 import org.robovm.apple.coregraphics.CGRect
 import org.robovm.apple.coregraphics.CGSize
 import org.robovm.apple.uikit.UIView
@@ -42,7 +41,6 @@ class  UILayoutHost @JvmOverloads constructor(val viewGroup: ViewGroup, frame: C
     override fun getSizeThatFits(size: CGSize): CGSize {
 
         // Measure the layout
-        logMsg("UILayoutHost.sizethatfits, size=%s", size)
         return viewGroup.measure(size.width - viewGroup.layout.margins.totalWidth(), size.height - viewGroup.layout.margins.totalHeight())
     }
 
@@ -52,20 +50,15 @@ class  UILayoutHost @JvmOverloads constructor(val viewGroup: ViewGroup, frame: C
     /// </summary>
     override fun layoutSubviews() {
         // Remeasure
-        logMsg("UILayoutHost.layoutSubViews, bounds=%s", bounds)
-        val newSize = viewGroup.measure(bounds.width - viewGroup.layout.margins.totalWidth(), bounds.height - viewGroup.layout.margins.totalHeight())
-        logMsg("UILayouthost: newSize = $newSize, bounds = $bounds, frame=$frame")
         val size = viewGroup.measuredSize
         val subViewPosition = bounds.applyInsets(viewGroup.layout.margins).applyGravity(size, viewGroup.layout.gravity)
-        logMsg("subviewPosition = $subViewPosition ")
         viewGroup.layout(subViewPosition, false)
         didLayoutAction?.invoke()
     }
 
     override fun willMoveToSuperview(superView: UIView?) {
         super.willMoveToSuperview(superView)
-        if(superView != null)
-            frame = superView.bounds
+        frame = superView?.bounds
     }
 
     var didLayoutAction: (() -> Unit?)? = null
