@@ -49,7 +49,7 @@ class  UILayoutHost @JvmOverloads constructor(val viewGroup: ViewGroup, frame: C
     /// Called by iOS to update the layout of this view
     /// </summary>
     override fun layoutSubviews() {
-        // Remeasure
+        viewGroup.onMeasure(bounds.width, bounds.height)
         val size = viewGroup.measuredSize
         val subViewPosition = bounds.applyInsets(viewGroup.layout.margins).applyGravity(size, viewGroup.layout.gravity)
         viewGroup.layout(subViewPosition, false)
