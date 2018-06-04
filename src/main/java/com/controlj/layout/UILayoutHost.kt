@@ -58,7 +58,8 @@ class  UILayoutHost @JvmOverloads constructor(val viewGroup: ViewGroup, frame: C
 
     override fun willMoveToSuperview(superView: UIView?) {
         super.willMoveToSuperview(superView)
-        frame = superView?.bounds
+        if(superView != null)
+            frame = superView.bounds
     }
 
     var didLayoutAction: (() -> Unit?)? = null
