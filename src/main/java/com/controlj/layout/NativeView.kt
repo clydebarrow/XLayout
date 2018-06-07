@@ -29,13 +29,6 @@ import org.robovm.apple.uikit.UIView
 import org.robovm.apple.uikit.UIViewAutoresizing
 
 open class NativeView(view: UIView, layout: Layout = Layout()) : View(layout) {
-    override var layout: Layout = layout
-        get() {
-            if (view is UILayoutHost)
-                return (view as UILayoutHost).viewGroup.layout
-            return super.layout
-        }
-
     /**
      * The measurer allows customisation of the size. The default implementation does not change it.
      */
@@ -120,7 +113,7 @@ open class NativeView(view: UIView, layout: Layout = Layout()) : View(layout) {
      */
     override fun onAttach(host: ViewGroup.IHost) {
         // attach the view to the hosting view by adding as a subview
-        logMsg("onAttach")
+        //logMsg("onAttach")
         host.getUIView().addSubview(view)
     }
 
@@ -169,5 +162,12 @@ open class NativeView(view: UIView, layout: Layout = Layout()) : View(layout) {
         return null
     }
 
-
+    companion object {
+        fun nativeView(view: UIView, layout: Layout = Layout(), config: NativeView.() -> Unit = {}): NativeView {
+            return NativeView(view, layout).apply(config)
+        }
+        fun nativeView(view: UIView, width: Double, height: Double, config: NativeView.() -> Unit = {}): NativeView {
+            return NativeView(view, Layout.absolute(width, height)).apply(config)
+        }
+    }
 }

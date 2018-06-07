@@ -17,21 +17,22 @@
 
 package com.controlj.layout
 
+import com.controlj.layout.View.Companion.logMsg
 import org.robovm.apple.coregraphics.CGRect
 import org.robovm.apple.coregraphics.CGSize
+import org.robovm.apple.foundation.NSOperatingSystemVersion
+import org.robovm.apple.foundation.NSProcessInfo
 import org.robovm.apple.uikit.UIView
-import org.robovm.apple.uikit.UIViewAutoresizing
 
 /**
  * UILayoutHost is the native UIView that hosts that XibFree layout
  * It acts as a FrameLayout with one child, i.e. the child will fill the frame of this view
  */
 
-class  UILayoutHost @JvmOverloads constructor(val viewGroup: ViewGroup, frame: CGRect = CGRect.Zero()) : UIView(frame), ViewGroup.IHost {
+open class UILayoutHost @JvmOverloads constructor(val viewGroup: ViewGroup, frame: CGRect = CGRect.Zero()) : UIView(frame), ViewGroup.IHost {
     init {
         viewGroup.host = this
-        this.autoresizingMask = UIViewAutoresizing.with(
-                UIViewAutoresizing.FlexibleWidth, UIViewAutoresizing.FlexibleHeight)
+        setTranslatesAutoresizingMaskIntoConstraints(false)
     }
 
     fun findNativeView(view: UIView): NativeView? {
@@ -49,16 +50,22 @@ class  UILayoutHost @JvmOverloads constructor(val viewGroup: ViewGroup, frame: C
     /// Called by iOS to update the layout of this view
     /// </summary>
     override fun layoutSubviews() {
-        viewGroup.onMeasure(bounds.width, bounds.height)
+        val subViewPosition = (
+                if (isIos11)
+                    bounds.inset(safeAreaInsets)
+                else
+                    bounds
+                ).applyInsets(viewGroup.layout.margins)
+        viewGroup.onMeasure(subViewPosition.width, subViewPosition.height)
         val size = viewGroup.measuredSize
-        val subViewPosition = bounds.applyInsets(viewGroup.layout.margins).applyGravity(size, viewGroup.layout.gravity)
-        viewGroup.layout(subViewPosition, false)
+        logMsg("${viewGroup.name}: frame=$frame, bounds=$bounds, subViewPosition=${subViewPosition.applyGravity(size, viewGroup.layout.gravity)}")
+        viewGroup.layout(subViewPosition.applyGravity(size, viewGroup.layout.gravity), false)
         didLayoutAction?.invoke()
     }
 
     override fun willMoveToSuperview(superView: UIView?) {
         super.willMoveToSuperview(superView)
-        if(superView != null)
+        if (superView != null)
             frame = superView.bounds
     }
 
@@ -82,4 +89,15 @@ class  UILayoutHost @JvmOverloads constructor(val viewGroup: ViewGroup, frame: C
         viewGroup.onHidden()
     }
 
+    companion object {
+        val iOS11 = NSOperatingSystemVersion(11, 0, 0)
+        val iOS10 = NSOperatingSystemVersion(10, 0, 0)
+
+        fun isOSVersionOrLater(version: NSOperatingSystemVersion): Boolean {
+            return NSProcessInfo.getSharedProcessInfo().isOperatingSystemAtLeastVersion(version)
+        }
+
+        val isIos11 = isOSVersionOrLater(iOS11)
+        val isIos10 = isOSVersionOrLater(iOS10)
+    }
 }

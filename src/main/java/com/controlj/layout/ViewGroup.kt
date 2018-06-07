@@ -212,20 +212,22 @@ abstract class ViewGroup(layout: Layout = Layout(), vararg views: View) : View(l
 
     override fun onLayout(newPosition: CGRect, parentHidden: Boolean) {
         val newHidden = parentHidden || !visible
-        if (layer != null) {
-            if (newHidden != layer!!.isHidden) {
+        layer?.apply {
+            CATransaction.begin()
+            if (newHidden != isHidden) {
                 // changing visibiliy - disable any animations
-                CATransaction.begin()
                 CATransaction.disablesActions()
-                layer!!.isHidden = newHidden
-                layer!!.frame = newPosition
-                CATransaction.commit()
-            } else if (!layer!!.isHidden)
-                layer!!.frame = newPosition
+                isHidden = newHidden
+                frame = newPosition
+            } else if (!isHidden)
+                frame = newPosition
+            CATransaction.commit()
         }
         if (newHidden)
-            for (subView in childViews)
+            for (subView in childViews) {
+                subView.indent = indent + 1
                 subView.layout(CGRect.Null(), false)
+            }
 
     }
 

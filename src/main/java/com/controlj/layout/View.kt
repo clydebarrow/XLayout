@@ -26,11 +26,11 @@ import org.robovm.apple.uikit.UIView
  * Abstract base class for any item in the layout view hierarchy
  * @param layout The layout parameters for this view. The default is to wrap content
  */
-abstract class View(open var layout: Layout = Layout()) : ViewStateListener {
+abstract class View(var layout: Layout = Layout()) : ViewStateListener {
     companion object {
         @JvmStatic
         fun logMsg(format: String, vararg args: Any) {
-            //System.err.println(String.format(format, *args))
+            System.err.println(String.format(format, *args))
         }
     }
 
@@ -47,6 +47,7 @@ abstract class View(open var layout: Layout = Layout()) : ViewStateListener {
      * A name mainly for debug use
      */
     var name: String = ""
+    var indent: Int = 0     // for debug output
     /**
      * The parent of this view
      */

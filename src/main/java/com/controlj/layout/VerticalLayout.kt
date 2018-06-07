@@ -29,6 +29,7 @@ open class VerticalLayout(layout: Layout = Layout(), vararg views: View) : ViewG
         addSubViews(*views)
     }
 
+
     var gravity = Gravity.TopLeft
     var totalWeight = 0.0
     var spacing = 0.0
@@ -115,11 +116,12 @@ open class VerticalLayout(layout: Layout = Layout(), vararg views: View) : ViewG
         if (parentHidden || !visible)
             return
         var y: Double
-        when (layout.gravity.vertical) {
+        /*when (layout.gravity.vertical) {
             Gravity.Vertical.Bottom -> y = newPosition.maxY - getTotalMeasuredHeight()
             Gravity.Vertical.Center -> y = (newPosition.minY + newPosition.maxY) / 2 - getTotalMeasuredHeight() / 2
             else -> y = newPosition.minY
-        }
+        } */
+        y = newPosition.minY
         childViews.forEachIndexed {idx,  v ->
             // Hide hidden views
             if (v.gone) {
@@ -129,7 +131,7 @@ open class VerticalLayout(layout: Layout = Layout(), vararg views: View) : ViewG
                 val size = v.measuredSize
                 // Work out horizontal layoutGravity for this control
                 val x: Double
-                when (gravity.horizontal) {
+                when (v.layout.gravity.horizontal) {
                     Gravity.Horizontal.Right -> x = newPosition.maxX - v.layout.margins.right - size.width
                     Gravity.Horizontal.Center -> x = (newPosition.minX + newPosition.maxX) / 2 - (size.width + v.layout.margins.totalWidth()) / 2
                     else -> x = newPosition.minX + v.layout.margins.left
@@ -159,6 +161,11 @@ open class VerticalLayout(layout: Layout = Layout(), vararg views: View) : ViewG
         if (width == MAX_DIMENSION)
             return width
         return width - v.layout.margins.totalWidth()
+    }
+    companion object {
+        fun verticalLayout(config: VerticalLayout.() -> Unit): VerticalLayout {
+            return VerticalLayout().apply(config)
+        }
     }
 
 }

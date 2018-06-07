@@ -32,7 +32,6 @@ data class Layout(
         var width: Double = 0.0,
         var height: Double = 0.0,
         var weight: Double = 0.0,
-        var margins: UIEdgeInsets = UIEdgeInsets.Zero(),
         var gravity: Gravity = Gravity.None) {
 
     /// <summary>
@@ -42,6 +41,26 @@ data class Layout(
     var maxHeight = MAX_DIMENSION
     var minHeight = 0.0
     var minWidth = 0.0
+    var leftMargin: Double = 0.0
+    var rightMargin: Double = 0.0
+    var topMargin: Double = 0.0
+    var bottomMargin: Double = 0.0
+    var margins: UIEdgeInsets
+        get() = UIEdgeInsets(topMargin, leftMargin, bottomMargin, rightMargin)
+        set(value) {
+            leftMargin = value.left
+            rightMargin = value.right
+            topMargin = value.top
+            bottomMargin = value.bottom
+        }
+
+    var margin: Double = 0.0
+        set(value) {
+            leftMargin = value
+            rightMargin = value
+            topMargin = value
+            bottomMargin = value
+        }
 
     enum class Mode {
         // dimension in points
@@ -130,6 +149,7 @@ data class Layout(
             layout.weight = weight
             return this
         }
+
         fun gravity(gravity: Gravity): Builder {
             if (layout.gravity != Gravity.None)
                 fail("Duplicate gravity")
@@ -144,16 +164,16 @@ data class Layout(
             return this
         }
 
-        fun margins(value: Double): Builder {
+        fun margin(value: Double): Builder {
             return margins(UIEdgeInsets(value, value, value, value))
         }
 
         fun build(): Layout {
-            if(layout.widthMode == Mode.Weighted && layout.heightMode == Mode.Weighted)
+            if (layout.widthMode == Mode.Weighted && layout.heightMode == Mode.Weighted)
                 fail("Only one axis can be weighted")       // TODO allow this for other layouts maybe?
-            if(!widthSet && layout.width != 0.0)
+            if (!widthSet && layout.width != 0.0)
                 layout.widthMode = Mode.Absolute
-            if(!heightSet && layout.height != 0.0)
+            if (!heightSet && layout.height != 0.0)
                 layout.heightMode = Mode.Absolute
             return layout
         }
@@ -162,6 +182,10 @@ data class Layout(
     companion object {
 
         val MAX_DIMENSION = Float.MAX_VALUE.toDouble()
+
+        fun layout(config: Layout.() -> Unit): Layout {
+            return Layout().apply(config)
+        }
 
         @JvmStatic
         fun dimToString(dim: Double): String {
@@ -234,6 +258,6 @@ data class Layout(
     }
 
     override fun toString(): String {
-        return "Horz[${dimToString(width)} $widthMode Gravity:${gravity.horizontal}] Vert[${dimToString(height)} $heightMode Gravity:${gravity.vertical}]"
+        return "Horz[${dimToString(width)} $widthMode Gravity:${gravity.horizontal}] Vert[${dimToString(height)} $heightMode Gravity:${gravity.vertical}] Weight: $weight"
     }
 }

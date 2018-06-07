@@ -38,6 +38,13 @@ class Checkbox : UIControl() {
         field = value
         setNeedsDisplay()
     }
+    private var hidden = false
+
+    override fun setHidden(p0: Boolean) {
+        hidden = p0
+        super.setHidden(p0)
+        logMsg("hidden = $hidden")
+    }
 
     init {
         backgroundColor = UIColor.clear()
@@ -45,8 +52,8 @@ class Checkbox : UIControl() {
     }
 
     override fun draw(rect: CGRect) {
-        logMsg("ishidden = $isHidden: ")
-        if(!isHidden()) {
+        logMsg("ishidden = $hidden: ")
+        if(!hidden) {
             drawOutline(rect);
             if (checked)
                 drawCheck(rect)

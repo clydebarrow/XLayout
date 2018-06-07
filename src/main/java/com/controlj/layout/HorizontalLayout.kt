@@ -29,13 +29,12 @@ open class HorizontalLayout(layout: Layout = Layout(), vararg views: View) : Vie
         addSubViews(*views)
     }
 
-    var gravity = Gravity.TopLeft
     var totalWeight = 0.0
     var spacing = 0.0
 
 
     override fun onMeasure(parentWidth: Double, parentHeight: Double) {
-        logMsg("$name: LinearLayout.measureHorizontal(%s, %s)", Layout.dimToString(parentWidth), Layout.dimToString(parentHeight))
+        logMsg("$name: HorizontalLayout.measure(%s, %s)", Layout.dimToString(parentWidth), Layout.dimToString(parentHeight))
         logMsg("$name: Layoutparams = %s", layout.toString())
         val layoutHeight = layout.tryResolveHeight(parentHeight)
         var layoutWidth = layout.tryResolveWidth(parentWidth)
@@ -79,7 +78,7 @@ open class HorizontalLayout(layout: Layout = Layout(), vararg views: View) : Vie
                 totalWeight = this.totalWeight
             var room = layoutWidth - totalFixedSize
             childViews.forEach {
-                logMsg("   $name: childview ${it.name} layout ${it.layout} filter=%s", (!it.gone && it.layout.widthMode == Layout.Mode.Weighted ).toString())
+                logMsg("   $name: childview ${it.name} layout ${it.layout} filter=%s", (!it.gone && it.layout.widthMode == Layout.Mode.Weighted).toString())
             }
             childViews
                     .filter { !it.gone && it.layout.widthMode == Layout.Mode.Weighted }
@@ -114,7 +113,7 @@ open class HorizontalLayout(layout: Layout = Layout(), vararg views: View) : Vie
         if (layoutWidth == MAX_DIMENSION)
             layoutWidth = totalFixedSize + totalVariableSize
         measuredSize = layout.resolveSize(CGSize(layoutWidth, layoutHeight), sizeMeasured)
-        logMsg("$name: LinearLayout.onMeasureHorizontal done: measuredSize =%s", measuredSize.asSizeString())
+        logMsg("$name: HorizontalLayout.onMeasureHorizontal done: measuredSize =%s", measuredSize.asSizeString())
     }
 
 
@@ -141,23 +140,24 @@ open class HorizontalLayout(layout: Layout = Layout(), vararg views: View) : Vie
         if (parentHidden || !visible)
             return
         var x: Double
+        /*
+        // gravity will be applied by the parent view
         when (layout.gravity.horizontal) {
             Gravity.Horizontal.Right -> x = newPosition.maxX - getTotalMeasuredWidth()
             Gravity.Horizontal.Center -> x = (newPosition.minX + newPosition.maxX) / 2 - getTotalMeasuredWidth() / 2
             else -> x = newPosition.minX
-        }
+        } */
+        x = newPosition.minX
         logMsg("$name: horizontal layout %s, x=$x, gravity=${layout.gravity.horizontal}, totalmeasured=${getTotalMeasuredWidth()}", newPosition)
         childViews.forEachIndexed { idx, v ->
             // Hide hidden views
             if (v.gone) {
                 v.layout(CGRect.Null(), false)
             } else {
-                x += if(idx == 0) v.layout.margins.left else spacing
+                x += if (idx == 0) v.layout.margins.left else spacing
                 val size = v.measuredSize
                 // Work out vertical gravity for this control
-                var g = v.layout.gravity.vertical
-                if (g == Gravity.Vertical.None)
-                    g = gravity.vertical
+                val g = v.layout.gravity.vertical
                 val y: Double
                 when (g) {
                     Gravity.Vertical.Bottom -> y = newPosition.maxY - v.layout.margins.bottom - size.height
@@ -175,5 +175,12 @@ open class HorizontalLayout(layout: Layout = Layout(), vararg views: View) : Vie
         if (height == MAX_DIMENSION)
             return height
         return height - v.layout.margins.totalHeight()
+    }
+
+
+    companion object {
+        fun horizontalLayout(config: HorizontalLayout.() -> Unit): HorizontalLayout {
+            return HorizontalLayout().apply(config)
+        }
     }
 }
