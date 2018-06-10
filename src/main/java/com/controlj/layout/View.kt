@@ -30,7 +30,7 @@ abstract class View(var layout: Layout = Layout()) : ViewStateListener {
     companion object {
         @JvmStatic
         fun logMsg(format: String, vararg args: Any) {
-            System.err.println(String.format(format, *args))
+            //System.err.println(String.format(format, *args))
         }
     }
 
