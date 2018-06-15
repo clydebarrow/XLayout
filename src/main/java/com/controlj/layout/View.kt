@@ -32,6 +32,8 @@ abstract class View(var layout: Layout = Layout()) : ViewStateListener {
         fun logMsg(format: String, vararg args: Any) {
             //System.err.println(String.format(format, *args))
         }
+
+        const val INVALID_WIDTH = -12345.0
     }
 
     /**
@@ -113,7 +115,7 @@ abstract class View(var layout: Layout = Layout()) : ViewStateListener {
     fun measure(parentWidth: Double, parentHeight: Double): CGSize {
         invalidateMeasure()
         onMeasure(parentWidth, parentHeight)
-        if (measuredSize.width < 0)
+        if (measuredSize.width  == INVALID_WIDTH)
             throw IllegalStateException("onMeasure didn't set measurement before returning")
         return measuredSize
     }
@@ -129,13 +131,13 @@ abstract class View(var layout: Layout = Layout()) : ViewStateListener {
      * Mark the measurement of this view as invalid
      */
     fun invalidateMeasure() {
-        measuredSize.width = -1.0
+        measuredSize.width = INVALID_WIDTH
     }
 
     /**
      * Where the measured size is stored after onMeasure
      */
-    internal var measuredSize: CGSize = CGSize(-1.0, -1.0)
+    internal var measuredSize: CGSize = CGSize(INVALID_WIDTH, -1.0)
         set(size) {
             if (layout.minWidth != 0.0 && size.width < layout.minWidth)
                 size.width = layout.minWidth

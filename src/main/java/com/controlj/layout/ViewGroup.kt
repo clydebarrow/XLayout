@@ -73,8 +73,8 @@ abstract class ViewGroup(layout: Layout = Layout(), vararg views: View) : View(l
             if (field != null)
                 onDetach()
             field = value
-            if (field != null)
-                onAttach(field!!)
+            if (value != null)
+                onAttach(value)
         }
 
     /**

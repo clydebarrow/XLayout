@@ -22,6 +22,7 @@ import org.robovm.apple.coregraphics.CGRect
 import org.robovm.apple.coregraphics.CGSize
 import org.robovm.apple.foundation.NSOperatingSystemVersion
 import org.robovm.apple.foundation.NSProcessInfo
+import org.robovm.apple.uikit.UIScreen
 import org.robovm.apple.uikit.UIView
 
 /**
@@ -29,10 +30,9 @@ import org.robovm.apple.uikit.UIView
  * It acts as a FrameLayout with one child, i.e. the child will fill the frame of this view
  */
 
-open class UILayoutHost @JvmOverloads constructor(val viewGroup: ViewGroup, frame: CGRect = CGRect.Zero()) : UIView(frame), ViewGroup.IHost {
+open class UILayoutHost @JvmOverloads constructor(val viewGroup: ViewGroup, frame: CGRect = UIScreen.getMainScreen().bounds) : UIView(frame), ViewGroup.IHost {
     init {
         viewGroup.host = this
-        setTranslatesAutoresizingMaskIntoConstraints(false)
     }
 
     fun findNativeView(view: UIView): NativeView? {
@@ -49,13 +49,15 @@ open class UILayoutHost @JvmOverloads constructor(val viewGroup: ViewGroup, fram
     /// <summary>
     /// Called by iOS to update the layout of this view
     /// </summary>
+    @Suppress("DEPRECATION")
     override fun layoutSubviews() {
+        setTranslatesAutoresizingMaskIntoConstraints(false)
         val subViewPosition = (
-                if (isIos11)
-                    bounds.inset(safeAreaInsets)
-                else
-                    bounds
-                ).applyInsets(viewGroup.layout.margins)
+                when {
+                    isIos11 -> bounds.inset(safeAreaInsets)
+                    else ->
+                        bounds
+                }).applyInsets(viewGroup.layout.margins)
         viewGroup.onMeasure(subViewPosition.width, subViewPosition.height)
         val size = viewGroup.measuredSize
         logMsg("${viewGroup.name}: frame=$frame, bounds=$bounds, subViewPosition=${subViewPosition.applyGravity(size, viewGroup.layout.gravity)}")
