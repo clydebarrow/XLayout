@@ -236,6 +236,7 @@ abstract class ViewGroup(layout: Layout = Layout(), vararg views: View) : View(l
      * @param index The index of the view to be removed
      */
     fun removeSubView(index: Int) {
+        childViews[index].onDetach()
         childViews.removeAt(index)
     }
 

@@ -41,7 +41,8 @@ open class NativeView(view: UIView, layout: Layout = Layout()) : View(layout) {
         set(value) {
             if (field != value) {
                 // Detach old view from host
-                host?.apply { onDetach() }
+                if(host != null)
+                    onDetach()
 
                 // Store the new view
                 field = value
@@ -50,7 +51,7 @@ open class NativeView(view: UIView, layout: Layout = Layout()) : View(layout) {
                 field.autoresizingMask = UIViewAutoresizing.None
 
                 // Attach the new view to the host
-                host?.apply { onAttach(host!!) }
+                host?.let { onAttach(it) }
             }
         }
 

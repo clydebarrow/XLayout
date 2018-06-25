@@ -45,14 +45,14 @@ class FrameLayout(layout: Layout = Layout(Layout.Mode.MatchParent, Layout.Mode.M
         childViews.forEach { subView ->
             var subViewWidth = MAX_DIMENSION
             var subViewHeight = MAX_DIMENSION
-            if (subView.layout.widthMode == Layout.Mode.Weighted) {
+            if (subView.layout.widthMode == Layout.Mode.MatchParent) {
                 if (width == MAX_DIMENSION) {
                     unresolved.add(subView)
                     return@forEach
                 } else
                     subViewWidth = width - subView.layout.margins.totalWidth()
             }
-            if (subView.layout.heightMode == Layout.Mode.Weighted) {
+            if (subView.layout.heightMode == Layout.Mode.MatchParent) {
                 if (height == MAX_DIMENSION) {
                     unresolved.add(subView)
                     return@forEach
@@ -73,9 +73,9 @@ class FrameLayout(layout: Layout = Layout(Layout.Mode.MatchParent, Layout.Mode.M
         // now resolve the unresolved subviews
 
         childViews.forEach { subView ->
-            val subViewWidth = if (subView.layout.widthMode == Layout.Mode.Weighted && haveResolvedSize)
+            val subViewWidth = if (subView.layout.widthMode == Layout.Mode.MatchParent && haveResolvedSize)
                 maxWidth - subView.layout.margins.totalWidth() else MAX_DIMENSION
-            val subViewHeight = if (subView.layout.heightMode == Layout.Mode.Weighted && haveResolvedSize)
+            val subViewHeight = if (subView.layout.heightMode == Layout.Mode.MatchParent && haveResolvedSize)
                 maxHeight - subView.layout.margins.totalHeight() else MAX_DIMENSION
             subView.measure(subViewWidth, subViewHeight)
         }
