@@ -1,13 +1,13 @@
 buildscript {
-    ext.kotlin_version = '1.2.31'
+    ext.kotlinVersion = '1.2.41'
     repositories {
         mavenLocal()
         mavenCentral()
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     }
     dependencies {
-        classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.4-SNAPSHOT'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.5-SNAPSHOT'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
 
@@ -24,11 +24,11 @@ repositories {
 }
 
 ext {
-    roboVMVersion = "2.3.4-SNAPSHOT"
+    roboVMVersion = "2.3.5-SNAPSHOT"
 
 }
-    roboVMVersion = "2.3.4-SNAPSHOT"
-kotlin_version = "1.2.31"
+    roboVMVersion = "2.3.5-SNAPSHOT"
+kotlinVersion = "1.2.41"
 robovm {
 }
 
@@ -36,7 +36,7 @@ dependencies {
     compile "com.mobidevelop.robovm:robovm-rt:${roboVMVersion}"
     compile "com.mobidevelop.robovm:robovm-cocoatouch:${roboVMVersion}"
     testCompile "junit:junit:4.12"
-    compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlin_version}"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
 }
 
 task wrapper(type: Wrapper) {

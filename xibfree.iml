@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module external.linked.project.id=":xibfree" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/../../projects/applibs" external.system.id="GRADLE" type="JAVA_MODULE" version="4">
+<module external.linked.project.id=":xibfree" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/../../projects/BlueMax" external.system.id="GRADLE" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="android-gradle" name="Android-Gradle">
       <configuration>
@@ -50,10 +50,10 @@
     </content>
     <orderEntry type="jdk" jdkName="RoboVM SDK 2.3.5-SNAPSHOT" jdkType="RoboVM SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" scope="PROVIDED" name="robovm-rt-2.3.4-SNAPSHOT" level="project" />
-    <orderEntry type="library" exported="" scope="PROVIDED" name="robovm-cocoatouch-2.3.4-SNAPSHOT" level="project" />
-    <orderEntry type="library" exported="" scope="PROVIDED" name="kotlin-stdlib-1.2.31" level="project" />
-    <orderEntry type="library" exported="" scope="PROVIDED" name="robovm-objc-2.3.4-SNAPSHOT" level="project" />
+    <orderEntry type="library" exported="" scope="PROVIDED" name="robovm-rt-2.3.5-SNAPSHOT" level="project" />
+    <orderEntry type="library" exported="" scope="PROVIDED" name="robovm-cocoatouch-2.3.5-SNAPSHOT" level="project" />
+    <orderEntry type="library" exported="" scope="PROVIDED" name="kotlin-stdlib-1.2.41" level="project" />
+    <orderEntry type="library" exported="" scope="PROVIDED" name="robovm-objc-2.3.5-SNAPSHOT" level="project" />
     <orderEntry type="library" exported="" scope="PROVIDED" name="annotations-13.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="junit-4.12" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="hamcrest-core-1.3" level="project" />
