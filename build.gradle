@@ -1,5 +1,4 @@
 buildscript {
-    ext.kotlinVersion = '1.2.41'
     repositories {
         mavenLocal()
         mavenCentral()
@@ -7,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.5-SNAPSHOT'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.ext.kotlinVersion}"
     }
 }
 
@@ -27,8 +26,6 @@ ext {
     roboVMVersion = "2.3.5-SNAPSHOT"
 
 }
-    roboVMVersion = "2.3.5-SNAPSHOT"
-kotlinVersion = "1.2.41"
 robovm {
 }
 
@@ -36,7 +33,7 @@ dependencies {
     compile "com.mobidevelop.robovm:robovm-rt:${roboVMVersion}"
     compile "com.mobidevelop.robovm:robovm-cocoatouch:${roboVMVersion}"
     testCompile "junit:junit:4.12"
-    compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:${rootProject.ext.kotlinVersion}"
 }
 
 task wrapper(type: Wrapper) {
