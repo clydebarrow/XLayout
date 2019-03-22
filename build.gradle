@@ -5,7 +5,7 @@ buildscript {
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     }
     dependencies {
-        classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.5-SNAPSHOT'
+        classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.6'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.ext.kotlinVersion}"
     }
 }
@@ -23,7 +23,7 @@ repositories {
 }
 
 ext {
-    roboVMVersion = "2.3.5-SNAPSHOT"
+    roboVMVersion = "2.3.6"
 
 }
 robovm {

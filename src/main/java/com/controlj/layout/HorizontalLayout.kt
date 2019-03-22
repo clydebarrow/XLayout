@@ -32,7 +32,6 @@ open class HorizontalLayout(layout: Layout = Layout(), vararg views: View) : Vie
     var totalWeight = 0.0
     var spacing = 0.0
 
-
     override fun onMeasure(parentWidth: Double, parentHeight: Double) {
         logMsg("$name: HorizontalLayout.measure(%s, %s)", Layout.dimToString(parentWidth), Layout.dimToString(parentHeight))
         logMsg("$name: Layoutparams = %s", layout.toString())
@@ -107,15 +106,14 @@ open class HorizontalLayout(layout: Layout = Layout(), vararg views: View) : Vie
                     }
             // set the height of children who want to match_parent
             childViews
-                    .filter { !it.gone && it.layout.heightMode == Layout.Mode.Weighted }
-                    .forEach { v -> v.measure(v.measuredSize.width, sizeMeasured.height) }
+                    .filter { !it.gone && it.layout.heightMode == Layout.Mode.MatchParent }
+                    .forEach { v -> v.measure(v.measuredSize.width, sizeMeasured.height - v.layout.margins.totalHeight()) }
         }
         if (layoutWidth == MAX_DIMENSION)
             layoutWidth = totalFixedSize + totalVariableSize
         measuredSize = layout.resolveSize(CGSize(layoutWidth, layoutHeight), sizeMeasured)
         logMsg("$name: HorizontalLayout.onMeasureHorizontal done: measuredSize =%s", measuredSize.asSizeString())
     }
-
 
     private fun getTotalSpacing(): Double {
         if (spacing == 0.0)
@@ -161,7 +159,7 @@ open class HorizontalLayout(layout: Layout = Layout(), vararg views: View) : Vie
                 val y: Double
                 when (g) {
                     Gravity.Vertical.Bottom -> y = newPosition.maxY - v.layout.margins.bottom - size.height
-                    Gravity.Vertical.Center -> y = (newPosition.minY + newPosition.maxY) / 2 - (size.height + v.layout.margins.totalHeight()) / 2.0
+                    Gravity.Vertical.Center -> y = (newPosition.minY + newPosition.maxY - size.height) / 2
                     else -> y = newPosition.minY + v.layout.margins.top
                 }
                 logMsg("$name: layout ${v.name} size = $size, y = $y")
@@ -176,7 +174,6 @@ open class HorizontalLayout(layout: Layout = Layout(), vararg views: View) : Vie
             return height
         return height - v.layout.margins.totalHeight()
     }
-
 
     companion object {
         fun horizontalLayout(config: HorizontalLayout.() -> Unit): HorizontalLayout {

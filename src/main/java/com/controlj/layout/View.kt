@@ -29,12 +29,18 @@ import org.robovm.apple.uikit.UIView
 abstract class View(var layout: Layout = Layout()) : ViewStateListener {
     companion object {
         @JvmStatic
+        @Suppress("UNUSED_PARAMETER")
         fun logMsg(format: String, vararg args: Any) {
             //System.err.println(String.format(format, *args))
         }
 
         const val INVALID_WIDTH = -12345.0
     }
+
+    /**
+     * The frame of this layout, for drawing the background
+     */
+    var frame: CGRect = CGRect()
 
     /**
      * The row in a table that this view is assigned to
@@ -74,10 +80,10 @@ abstract class View(var layout: Layout = Layout()) : ViewStateListener {
      */
     internal open var host: ViewGroup.IHost?
         get() = parent!!.host
+        @Suppress("UNUSED_PARAMETER")
         set(value) {
             throw IllegalArgumentException("Can't set host on plain view")
         }
-
 
     /**
      * Internal notification that this view has been attached to a hosting view
@@ -97,6 +103,7 @@ abstract class View(var layout: Layout = Layout()) : ViewStateListener {
      * @param parentHidden True if the parent is currently hidden
      */
     fun layout(newPosition: CGRect, parentHidden: Boolean) {
+        frame = newPosition
         onLayout(newPosition, parentHidden)
     }
 
@@ -115,7 +122,7 @@ abstract class View(var layout: Layout = Layout()) : ViewStateListener {
     fun measure(parentWidth: Double, parentHeight: Double): CGSize {
         invalidateMeasure()
         onMeasure(parentWidth, parentHeight)
-        if (measuredSize.width  == INVALID_WIDTH)
+        if (measuredSize.width == INVALID_WIDTH)
             throw IllegalStateException("onMeasure didn't set measurement before returning")
         return measuredSize
     }
@@ -204,4 +211,5 @@ abstract class View(var layout: Layout = Layout()) : ViewStateListener {
 
     override fun onHidden() {
     }
+
 }

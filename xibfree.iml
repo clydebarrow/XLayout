@@ -1,52 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module external.linked.project.id=":xibfree" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/../../projects/trackdirect" external.system.id="GRADLE" type="JAVA_MODULE" version="4">
+<module external.linked.project.id=":xibfree" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/../../projects/BlueMax" external.system.id="GRADLE" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="kotlin-language" name="Kotlin">
       <configuration version="3" platform="JVM 1.6" useProjectSettings="false">
         <compilerSettings />
         <compilerArguments>
           <option name="destination" value="$MODULE_DIR$/build/classes/kotlin/main" />
-          <option name="classpath" value="$MAVEN_REPOSITORY$/com/mobidevelop/robovm/robovm-rt/2.3.5-SNAPSHOT/robovm-rt-2.3.5-SNAPSHOT.jar:/Users/clyde/.m2/repository/com/mobidevelop/robovm/robovm-cocoatouch/2.3.5-SNAPSHOT/robovm-cocoatouch-2.3.5-SNAPSHOT.jar:/Users/clyde/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.2.71/d9717625bb3c731561251f8dd2c67a1011d6764c/kotlin-stdlib-1.2.71.jar:/Users/clyde/.m2/repository/com/mobidevelop/robovm/robovm-objc/2.3.5-SNAPSHOT/robovm-objc-2.3.5-SNAPSHOT.jar:/Users/clyde/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.2.71/ba18ca1aa0e40eb6f1865b324af2f4cbb691c1ec/kotlin-stdlib-common-1.2.71.jar:/Users/clyde/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/13.0/919f0dfe192fb4e063e7dacadee7f8bb9a2672a9/annotations-13.0.jar" />
+          <option name="classpath" value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.mobidevelop.robovm/robovm-rt/2.3.6/a66966ffcac4674b1f50c9e237eb83e7aac2eb4d/robovm-rt-2.3.6.jar:/Users/clyde/.gradle/caches/modules-2/files-2.1/com.mobidevelop.robovm/robovm-cocoatouch/2.3.6/932c190c22504d3c820f70ff3c436f4e0ba7df00/robovm-cocoatouch-2.3.6.jar:/Users/clyde/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.3.21/4bcc2012b84840e19e1e28074284cac908be0295/kotlin-stdlib-1.3.21.jar:/Users/clyde/.gradle/caches/modules-2/files-2.1/com.mobidevelop.robovm/robovm-objc/2.3.6/b167b593016b51bfc5ec2a8f8d782bbf79cf5b09/robovm-objc-2.3.6.jar:/Users/clyde/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.3.21/f30e4a9897913e53d778f564110bafa1fef46643/kotlin-stdlib-common-1.3.21.jar:/Users/clyde/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/13.0/919f0dfe192fb4e063e7dacadee7f8bb9a2672a9/annotations-13.0.jar" />
           <option name="noStdlib" value="true" />
           <option name="noReflect" value="true" />
           <option name="moduleName" value="xibfree" />
           <option name="addCompilerBuiltIns" value="true" />
           <option name="loadBuiltInsFromDependencies" value="true" />
-          <option name="languageVersion" value="1.2" />
-          <option name="apiVersion" value="1.2" />
+          <option name="languageVersion" value="1.3" />
+          <option name="apiVersion" value="1.3" />
           <option name="pluginOptions">
             <array />
           </option>
           <option name="pluginClasspaths">
             <array />
           </option>
-          <option name="coroutinesState" value="warn" />
+          <option name="errors">
+            <ArgumentParseErrors />
+          </option>
         </compilerArguments>
       </configuration>
     </facet>
-  </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
-    <output url="file://$MODULE_DIR$/build/classes/java/main" />
-    <output-test url="file://$MODULE_DIR$/build/classes/java/test" />
-    <exclude-output />
-    <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/main/kotlin" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/test/kotlin" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/test/resources" type="java-test-resource" />
-      <excludeFolder url="file://$MODULE_DIR$/.gradle" />
-    </content>
-    <orderEntry type="jdk" jdkName="RoboVM SDK 2.3.4-SNAPSHOT" jdkType="RoboVM SDK" />
-    <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="Gradle: robovm-rt-2.3.5-SNAPSHOT" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: robovm-cocoatouch-2.3.5-SNAPSHOT" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: kotlin-stdlib-1.2.71" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: robovm-objc-2.3.5-SNAPSHOT" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: kotlin-stdlib-common-1.2.71" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: annotations-13.0" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="Gradle: junit-4.12" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="Gradle: hamcrest-core-1.3" level="project" />
   </component>
 </module>

@@ -29,7 +29,6 @@ open class VerticalLayout(layout: Layout = Layout(), vararg views: View) : ViewG
         addSubViews(*views)
     }
 
-
     var gravity = Gravity.TopLeft
     var totalWeight = 0.0
     var spacing = 0.0
@@ -101,8 +100,8 @@ open class VerticalLayout(layout: Layout = Layout(), vararg views: View) : ViewG
                     }
             // set the width of children who want to match_parent
             childViews
-                    .filter { !it.gone && it.layout.widthMode == Layout.Mode.Weighted }
-                    .forEach { v -> v.measure(sizeMeasured.width, v.measuredSize.height) }
+                    .filter { !it.gone && it.layout.widthMode == Layout.Mode.MatchParent }
+                    .forEach { v -> v.measure(sizeMeasured.width - v.layout.margins.totalWidth(), v.measuredSize.height) }
         }
         if (layoutHeight == MAX_DIMENSION)
             layoutHeight = totalFixedSize + totalVariableSize
@@ -122,7 +121,7 @@ open class VerticalLayout(layout: Layout = Layout(), vararg views: View) : ViewG
             else -> y = newPosition.minY
         } */
         y = newPosition.minY
-        childViews.forEachIndexed {idx,  v ->
+        childViews.forEachIndexed { idx, v ->
             // Hide hidden views
             if (v.gone) {
                 v.layout(CGRect.Null(), false)
@@ -133,7 +132,7 @@ open class VerticalLayout(layout: Layout = Layout(), vararg views: View) : ViewG
                 val x: Double
                 when (v.layout.gravity.horizontal) {
                     Gravity.Horizontal.Right -> x = newPosition.maxX - v.layout.margins.right - size.width
-                    Gravity.Horizontal.Center -> x = (newPosition.minX + newPosition.maxX) / 2 - (size.width + v.layout.margins.totalWidth()) / 2
+                    Gravity.Horizontal.Center -> x = (newPosition.minX + newPosition.maxX - size.width) / 2
                     else -> x = newPosition.minX + v.layout.margins.left
                 }
                 v.layout(CGRect(x, y, size.width, size.height), false)
@@ -162,6 +161,7 @@ open class VerticalLayout(layout: Layout = Layout(), vararg views: View) : ViewG
             return width
         return width - v.layout.margins.totalWidth()
     }
+
     companion object {
         fun verticalLayout(config: VerticalLayout.() -> Unit): VerticalLayout {
             return VerticalLayout().apply(config)

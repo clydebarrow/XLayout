@@ -224,11 +224,10 @@ abstract class ViewGroup(layout: Layout = Layout(), vararg views: View) : View(l
             CATransaction.commit()
         }
         if (newHidden)
-            for (subView in childViews) {
+            childViews.forEach { subView ->
                 subView.indent = indent + 1
                 subView.layout(CGRect.Null(), false)
             }
-
     }
 
     /**

@@ -20,6 +20,8 @@ package com.controlj.layout
 import org.robovm.apple.coregraphics.CGRect
 import org.robovm.apple.coregraphics.CGSize
 import org.robovm.apple.uikit.UIEdgeInsets
+import org.robovm.apple.uikit.UITextField
+import org.robovm.objc.Selector
 
 /**
  * Created by clyde on 9/4/18.
@@ -60,6 +62,10 @@ fun CGSize.applyPadding(padding: UIEdgeInsets): CGSize {
     return CGSize(width + padding.totalWidth(), height + padding.totalHeight())
 }
 
+fun CGSize.applyPadding(padding: Double): CGSize {
+    return CGSize(width + padding*2, height + padding*2)
+}
+
 fun CGRect.applyGravity(size: CGSize, g: Gravity): CGRect {
     val left: Double
     when (g.horizontal) {
@@ -74,4 +80,11 @@ fun CGRect.applyGravity(size: CGSize, g: Gravity): CGRect {
         else -> top = minY
     }
     return CGRect(left, top, size.width, size.height)
+}
+
+/**
+ * Select all the text in a text field.
+ */
+fun UITextField.selectAll() {
+    performSelector(Selector.register("selectAll"), null, 0.0)
 }
