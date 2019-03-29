@@ -20,6 +20,7 @@ package com.controlj.layout
 import org.robovm.apple.coreanimation.CALayer
 import org.robovm.apple.coreanimation.CATransaction
 import org.robovm.apple.coregraphics.CGRect
+import org.robovm.apple.uikit.UIColor
 import org.robovm.apple.uikit.UIView
 
 /**
@@ -83,7 +84,7 @@ abstract class ViewGroup(layout: Layout = Layout(), vararg views: View) : View(l
      * of another group.
      */
 
-    var childViews: MutableList<View> = ArrayList<View>()
+    var childViews: MutableList<View> = mutableListOf()
         set(value) {
             for (v in value)
                 if (v.parent != null)
@@ -135,8 +136,10 @@ abstract class ViewGroup(layout: Layout = Layout(), vararg views: View) : View(l
      * @param view The view to be added
      * @param layout The layout parameters to be used for the subview
      */
-    fun insertSubView(position: Int, view: UIView, layout: Layout) {
-        insertSubView(position, NativeView(view, layout))
+    fun insertSubView(position: Int, view: UIView, layout: Layout): NativeView {
+        val nativeView = NativeView(view, layout)
+        insertSubView(position, nativeView)
+        return nativeView
     }
 
     /**
@@ -144,12 +147,12 @@ abstract class ViewGroup(layout: Layout = Layout(), vararg views: View) : View(l
      * @param view The view to be added
      * @param layout The layout parameters to be used for the subview
      */
-    fun addSubView(view: UIView, layout: Layout = Layout()) {
-        insertSubView(-1, view, layout)
+    fun addSubView(view: UIView, layout: Layout = Layout()): NativeView {
+        return insertSubView(-1, view, layout)
     }
 
     fun addSubView(view: UIView, width: Double, height: Double) {
-        addSubView(view, Layout(Layout.Mode.Absolute, Layout.Mode.Absolute, width, height))
+        addSubView(view, Layout(width, Layout.Mode.Absolute, height, Layout.Mode.Absolute))
     }
 
     override fun onAttach(host: IHost) {
@@ -260,21 +263,45 @@ abstract class ViewGroup(layout: Layout = Layout(), vararg views: View) : View(l
         }
     }
 
+    /**
+     * Remove all subviews
+     */
     fun removeAllSubviews() {
         val cnt = childViews.size
         for (i in cnt - 1..0)
             removeSubView(i)
     }
 
+    /**
+     * An interface between a viewgroup and the native host
+     */
     interface IHost {
         fun getUIView(): UIView
     }
 
+    /**
+     * Called when the layout is shown
+     */
     override fun onShown() {
         childViews.forEach { it.onShown() }
     }
 
+    /**
+     * Called when the layout is hidden
+     */
     override fun onHidden() {
         childViews.forEach { it.onHidden() }
     }
+
+    /**
+     * Add a divider with the specified [thickness] and [color]
+     */
+
+    open fun addDivider(thickness: Double = 1.0, color: UIColor = UIColor.darkGray()): NativeView {
+        val view = UIView()
+        view.backgroundColor = color
+        return addSubView(view, dividerLayout(thickness))
+    }
+
+    open fun dividerLayout(thickness: Double): Layout = Layout()
 }

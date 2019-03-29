@@ -31,7 +31,7 @@ abstract class View(var layout: Layout = Layout()) : ViewStateListener {
         @JvmStatic
         @Suppress("UNUSED_PARAMETER")
         fun logMsg(format: String, vararg args: Any) {
-            //System.err.println(String.format(format, *args))
+            System.err.println(String.format(format, *args))
         }
 
         const val INVALID_WIDTH = -12345.0
@@ -146,15 +146,10 @@ abstract class View(var layout: Layout = Layout()) : ViewStateListener {
      */
     internal var measuredSize: CGSize = CGSize(INVALID_WIDTH, -1.0)
         set(size) {
-            if (layout.minWidth != 0.0 && size.width < layout.minWidth)
-                size.width = layout.minWidth
-            if (layout.minHeight != 0.0 && size.height < layout.minHeight)
-                size.height = layout.minHeight
-            if (layout.maxWidth != 0.0 && size.width > layout.maxWidth)
-                size.width = layout.maxWidth
-            if (layout.maxHeight != 0.0 && size.height > layout.maxHeight)
-                size.height = layout.maxHeight
-            field = size
+            field = CGSize(
+                    size.width.coerceIn(layout.minWidth, layout.maxWidth),
+                    size.height.coerceIn(layout.minHeight, layout.maxHeight))
+
         }
 
     internal abstract fun getDisplayLayer(): CALayer?

@@ -30,7 +30,7 @@ import org.robovm.apple.uikit.UIView
  * It acts as a FrameLayout with one child, i.e. the child will fill the frame of this view
  */
 
-open class UILayoutHost @JvmOverloads constructor(val viewGroup: ViewGroup, frame: CGRect = UIScreen.getMainScreen().bounds) : UIView(frame), ViewGroup.IHost {
+open class UILayoutHost constructor(val viewGroup: ViewGroup, frame: CGRect = UIScreen.getMainScreen().bounds) : UIView(frame), ViewGroup.IHost {
     init {
         viewGroup.host = this
     }

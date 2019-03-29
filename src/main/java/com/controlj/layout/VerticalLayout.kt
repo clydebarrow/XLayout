@@ -20,6 +20,8 @@ package com.controlj.layout
 import com.controlj.layout.Layout.Companion.MAX_DIMENSION
 import org.robovm.apple.coregraphics.CGRect
 import org.robovm.apple.coregraphics.CGSize
+import org.robovm.apple.uikit.UIColor
+import org.robovm.apple.uikit.UIView
 
 /**
  * Created by clyde on 8/4/18.
@@ -36,13 +38,24 @@ open class VerticalLayout(layout: Layout = Layout(), vararg views: View) : ViewG
     override fun onMeasure(parentWidth: Double, parentHeight: Double) {
         logMsg("$name: VerticalLayout.onMeasure(%s, %s)", Layout.dimToString(parentWidth), Layout.dimToString(parentHeight))
         logMsg("$name: Layoutparams = %s", layout.toString())
-        val layoutWidth = layout.tryResolveWidth(parentWidth)
+        var layoutWidth = layout.tryResolveWidth(parentWidth)
         var layoutHeight = layout.tryResolveHeight(parentHeight)
         //logMsg("$name: layoutWidth/Height(%g, %g)", layoutWidth, layoutHeight)
         var totalFixedSize = 0.0
         var totalWeight = 0.0
         var visibleViewCount = 0
+        var totalVariableSize = 0.0
 
+        val sizeMeasured = CGSize()
+        if (layoutWidth == MAX_DIMENSION) {
+            sizeMeasured.width = parentWidth
+            childViews
+                    .filter { !it.gone && it.layout.widthMode != Layout.Mode.MatchParent }
+                    .forEach { v ->
+                        sizeMeasured.width = Math.max(sizeMeasured.width, v.measuredSize.width + v.layout.margins.totalWidth())
+                    }
+            layoutWidth = sizeMeasured.width
+        }
         // calculate total fixed size
         childViews
                 .filter { !it.gone }
@@ -62,7 +75,6 @@ open class VerticalLayout(layout: Layout = Layout(), vararg views: View) : ViewG
             totalFixedSize += spacing * (visibleViewCount - 1)
 
         // calculate total size of variable elements
-        var totalVariableSize = 0.0
         if (layout.heightMode == Layout.Mode.WrapContent || layoutHeight == MAX_DIMENSION) {
             // weird case - height is wrap_content, but some children are match_parent
             // use their natural size instead
@@ -90,19 +102,9 @@ open class VerticalLayout(layout: Layout = Layout(), vararg views: View) : ViewG
         }
 
         // find max width of all children that are not match_parent
-        val sizeMeasured = CGSize()
-        if (layoutWidth == MAX_DIMENSION) {
-            sizeMeasured.width = 0.0
-            childViews
-                    .filter { !it.gone && it.layout.widthMode != Layout.Mode.Weighted }
-                    .forEach { v ->
-                        sizeMeasured.width = Math.max(sizeMeasured.width, v.measuredSize.width + v.layout.margins.totalWidth())
-                    }
-            // set the width of children who want to match_parent
-            childViews
-                    .filter { !it.gone && it.layout.widthMode == Layout.Mode.MatchParent }
-                    .forEach { v -> v.measure(sizeMeasured.width - v.layout.margins.totalWidth(), v.measuredSize.height) }
-        }
+        childViews
+                .filter { !it.gone && it.layout.widthMode == Layout.Mode.MatchParent }
+                .forEach { v -> v.measure(sizeMeasured.width - v.layout.margins.totalWidth(), v.measuredSize.height) }
         if (layoutHeight == MAX_DIMENSION)
             layoutHeight = totalFixedSize + totalVariableSize
         measuredSize = layout.resolveSize(CGSize(layoutWidth, layoutHeight), sizeMeasured)
@@ -162,10 +164,12 @@ open class VerticalLayout(layout: Layout = Layout(), vararg views: View) : ViewG
         return width - v.layout.margins.totalWidth()
     }
 
+    override fun dividerLayout(thickness: Double): Layout {
+        return Layout(height = thickness, widthMode = Layout.Mode.MatchParent)
+    }
     companion object {
         fun verticalLayout(config: VerticalLayout.() -> Unit): VerticalLayout {
             return VerticalLayout().apply(config)
         }
     }
-
 }

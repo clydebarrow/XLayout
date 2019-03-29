@@ -29,11 +29,11 @@ import org.robovm.apple.coregraphics.CGSize
  * determine where in the FrameLayout the child appears. The position of each child is independent of
  * all other children
  */
-class FrameLayout(layout: Layout = Layout(Layout.Mode.MatchParent, Layout.Mode.MatchParent)) : ViewGroup(layout) {
+class FrameLayout(layout: Layout = Layout(widthMode = Layout.Mode.MatchParent, heightMode = Layout.Mode.MatchParent)) : ViewGroup(layout) {
     var gravity = Gravity.TopLeft
 
     override fun onMeasure(parentWidth: Double, parentHeight: Double) {
-        val unresolved = ArrayList<View>()
+        val unresolved = mutableListOf<View>()
         val width = layout.tryResolveWidth(parentWidth)
         val height = layout.tryResolveHeight(parentHeight)
 

@@ -22,16 +22,17 @@ import org.robovm.apple.coregraphics.CGSize
 import org.robovm.apple.uikit.UIEdgeInsets
 import kotlin.math.roundToInt
 
-/// <summary>
-/// A Layout declares how a view should be laid out by its parent view group.
-/// </summary>
+/**
+ * A [Layout] describes how a view should be laid out in its parent.
+ */
 
 data class Layout(
-        var widthMode: Mode = Mode.WrapContent,
-        var heightMode: Mode = Mode.WrapContent,
         var width: Double = 0.0,
+        var widthMode: Mode = if (width == 0.0) Mode.WrapContent else Mode.Absolute,
         var height: Double = 0.0,
+        var heightMode: Mode = if (height == 0.0) Mode.WrapContent else Mode.Absolute,
         var weight: Double = 0.0,
+        var aspectRatio: Double = 1.0,
         var gravity: Gravity = Gravity.None) {
 
     /// <summary>
@@ -54,13 +55,14 @@ data class Layout(
             bottomMargin = value.bottom
         }
 
-    var margin: Double = 0.0
+    var margin: Double
         set(value) {
             leftMargin = value
             rightMargin = value
             topMargin = value
             bottomMargin = value
         }
+        get() = leftMargin
 
     enum class Mode {
         // dimension in points
@@ -69,8 +71,10 @@ data class Layout(
         MatchParent,
         // wrap the content
         WrapContent,
-        // use width value as a weight
-        Weighted
+        // Use weight to calculate the size
+        Weighted,
+        // make one dimension equal to a multiple of the other
+        Aspect
     }
 
     /**
@@ -195,7 +199,7 @@ data class Layout(
         }
 
         fun absolute(width: Double, height: Double): Layout {
-            return Layout(Mode.Absolute, Mode.Absolute, width, height)
+            return Layout(width, Mode.Absolute, height, Mode.Absolute)
         }
 
         /*
@@ -226,6 +230,7 @@ data class Layout(
         val resolvedWidth: Double
         when (widthMode) {
             Mode.Absolute -> resolvedWidth = width
+            Mode.Aspect -> resolvedWidth = height * aspectRatio
             Mode.Weighted, Mode.MatchParent -> resolvedWidth = parentWidth
             else -> resolvedWidth = MAX_DIMENSION
         }
@@ -237,6 +242,7 @@ data class Layout(
         val resolvedHeight: Double
         when (heightMode) {
             Mode.Absolute -> resolvedHeight = height
+            Mode.Aspect -> resolvedHeight = width * aspectRatio
             Mode.Weighted, Mode.MatchParent -> resolvedHeight = parentHeight
             else ->
                 resolvedHeight = MAX_DIMENSION
@@ -252,7 +258,10 @@ data class Layout(
             size.width = sizeMeasured.width
         if (size.height == MAX_DIMENSION)
             size.height = sizeMeasured.height
-
+        if(widthMode == Mode.Aspect)
+            size.width = size.height * aspectRatio
+        else if(heightMode == Mode.Aspect)
+            size.height = size.width * aspectRatio
         logMsg("ResolveSize ->(%s, %s)", dimToString(size.width), dimToString(size.height))
         return size
     }

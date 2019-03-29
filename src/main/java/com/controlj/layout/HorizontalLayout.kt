@@ -20,6 +20,8 @@ package com.controlj.layout
 import com.controlj.layout.Layout.Companion.MAX_DIMENSION
 import org.robovm.apple.coregraphics.CGRect
 import org.robovm.apple.coregraphics.CGSize
+import org.robovm.apple.uikit.UIColor
+import org.robovm.apple.uikit.UIView
 
 /**
  * Created by clyde on 8/4/18.
@@ -35,13 +37,26 @@ open class HorizontalLayout(layout: Layout = Layout(), vararg views: View) : Vie
     override fun onMeasure(parentWidth: Double, parentHeight: Double) {
         logMsg("$name: HorizontalLayout.measure(%s, %s)", Layout.dimToString(parentWidth), Layout.dimToString(parentHeight))
         logMsg("$name: Layoutparams = %s", layout.toString())
-        val layoutHeight = layout.tryResolveHeight(parentHeight)
+        var layoutHeight = layout.tryResolveHeight(parentHeight)
         var layoutWidth = layout.tryResolveWidth(parentWidth)
         logMsg("$name: layoutWidth/Height is now (%s, %s)", Layout.dimToString(layoutWidth), Layout.dimToString(layoutHeight))
         var totalFixedSize = 0.0
         var totalWeight = 0.0
         var visibleViewCount = 0
+        val sizeMeasured = CGSize()
 
+        // find max height of all children that are not match_parent
+        logMsg("$name: ready to measure height - layoutHeight == %s", Layout.dimToString(layoutHeight))
+        if (layoutHeight == MAX_DIMENSION) {
+            sizeMeasured.height = parentHeight
+            childViews
+                    .filter { !it.gone && it.layout.heightMode != Layout.Mode.MatchParent }
+                    .forEach { v ->
+                        sizeMeasured.height = Math.max(sizeMeasured.height, v.measuredSize.height + v.layout.margins.totalHeight())
+                        logMsg("$name: sizemeasured is %s after adding %s", sizeMeasured.asSizeString(), v.javaClass.superclass.simpleName)
+                    }
+            layoutHeight = sizeMeasured.height
+        }
         // calculate total fixed size
         childViews
                 .filter { !it.gone }
@@ -65,8 +80,8 @@ open class HorizontalLayout(layout: Layout = Layout(), vararg views: View) : Vie
         if (layout.widthMode == Layout.Mode.WrapContent || layoutWidth == MAX_DIMENSION) {
             // weird case - width is wrap_content, but some children are match_parent
             // use their natural size instead
-            childViews
-                    .filter { !it.gone && it.layout.widthMode == Layout.Mode.Weighted }
+            // TODO check that this is right. width of things in horizontal layout should not be match parent
+            childViews.filter { !it.gone && it.layout.widthMode == Layout.Mode.Weighted }
                     .forEach { v ->
                         logMsg("$name: weird case for ${v.name}")
                         totalVariableSize += v.measure(MAX_DIMENSION, adjustLayoutHeight(layoutHeight, v)).width
@@ -94,21 +109,8 @@ open class HorizontalLayout(layout: Layout = Layout(), vararg views: View) : Vie
         }
 
         // find max height of all children that are not match_parent
-        val sizeMeasured = CGSize()
-        logMsg("$name: ready to measure height - layoutHeight == %s", Layout.dimToString(layoutHeight))
-        if (layoutHeight == MAX_DIMENSION) {
-            sizeMeasured.height = 0.0
-            childViews
-                    .filter { !it.gone && it.layout.heightMode != Layout.Mode.Weighted }
-                    .forEach { v ->
-                        sizeMeasured.height = Math.max(sizeMeasured.height, v.measuredSize.height + v.layout.margins.totalHeight())
-                        logMsg("$name: sizemeasured is %s after adding %s", sizeMeasured.asSizeString(), v.javaClass.superclass.simpleName)
-                    }
-            // set the height of children who want to match_parent
-            childViews
-                    .filter { !it.gone && it.layout.heightMode == Layout.Mode.MatchParent }
-                    .forEach { v -> v.measure(v.measuredSize.width, sizeMeasured.height - v.layout.margins.totalHeight()) }
-        }
+        childViews.filter { !it.gone && it.layout.heightMode == Layout.Mode.MatchParent }
+                .forEach { v -> v.measure(v.measuredSize.width, sizeMeasured.height - v.layout.margins.totalHeight()) }
         if (layoutWidth == MAX_DIMENSION)
             layoutWidth = totalFixedSize + totalVariableSize
         measuredSize = layout.resolveSize(CGSize(layoutWidth, layoutHeight), sizeMeasured)
@@ -169,6 +171,9 @@ open class HorizontalLayout(layout: Layout = Layout(), vararg views: View) : Vie
         }
     }
 
+    override fun dividerLayout(thickness: Double): Layout {
+        return Layout(width = thickness, heightMode = Layout.Mode.MatchParent)
+    }
     private fun adjustLayoutHeight(height: Double, v: View): Double {
         if (height == MAX_DIMENSION)
             return height
@@ -179,5 +184,6 @@ open class HorizontalLayout(layout: Layout = Layout(), vararg views: View) : Vie
         fun horizontalLayout(config: HorizontalLayout.() -> Unit): HorizontalLayout {
             return HorizontalLayout().apply(config)
         }
+
     }
 }
