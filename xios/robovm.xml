@@ -1,0 +1,59 @@
+<!--
+  ~ Copyright (c) 2019 Control-J Pty. Ltd. All rights reserved
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~ .
+  ~
+  -->
+
+<config>
+    <!-- The framework targets iOS. -->
+    <os>ios</os>
+
+    <!-- Build a fat binary containing 32-bit and 64-bit machine code for both
+    devices and the simulator. -->
+    <arch>arm64</arch>
+    <arch>thumbv7</arch>
+    <arch>x86</arch>
+    <arch>x86_64</arch>
+
+    <!-- We're building a framework. -->
+    <target>framework</target>
+
+    <!-- The framework name is defined in robovm.properties. -->
+    <imageName>${framework.name}</imageName>
+
+    <!-- The Info.plist.xml file will be copied into the framework. -->
+    <infoPList>Info.plist.xml</infoPList>
+
+    <resources>
+        <!-- Copies the header files in headers/ to a directory named Headers in
+        the root of the .framework folder structure. -->
+        <resource>
+            <directory>headers</directory>
+            <targetPath>../../Headers</targetPath>
+        </resource>
+        <!-- Copies the modules files in modules/ to a directory named Moduless in
+        the root of the .framework folder structure. Required to enable swift support -->
+        <resource>
+            <directory>modules</directory>
+            <targetPath>../../Modules</targetPath>
+        </resource>
+    </resources>
+    <treeShaker>aggressive</treeShaker>
+
+    <!-- Force link all classes in the SDK packages. -->
+    <forceLinkClasses>
+        <pattern>com.controlj.xibfree.**</pattern>
+    </forceLinkClasses>
+</config>
