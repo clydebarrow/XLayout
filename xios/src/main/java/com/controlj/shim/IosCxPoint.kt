@@ -18,7 +18,7 @@
 
 package com.controlj.shim
 
-import org.robovm.apple.uikit.UIColor
+import org.robovm.apple.coregraphics.CGPoint
 
 /**
  * Copyright (C) Control-J Pty. Ltd. ACN 103594190
@@ -26,15 +26,18 @@ import org.robovm.apple.uikit.UIColor
  *
  * User: clyde
  * Date: 2019-03-30
- * Time: 13:42
+ * Time: 13:18
  */
-class iosUxColor(uiColor: UIColor): UxColor {
-    override val red: Double = uiColor.rgba[0]
-    override val green: Double = uiColor.rgba[1]
-    override val blue: Double = uiColor.rgba[2]
-    override val alpha: Double = uiColor.rgba[3]
-}
+class IosCxPoint(val cgPoint: CGPoint=CGPoint()) : CxPoint {
+    override var x: Double
+        get() = cgPoint.x
+        set(value) {
+            cgPoint.x = value
+        }
+    override var y: Double
+        get() = cgPoint.y
+        set(value) {
+            cgPoint.y = value
+        }
 
-fun UxColor.asUIColor(): UIColor {
-    return UIColor.fromRGBA(red, green, blue, alpha)
 }

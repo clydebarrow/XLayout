@@ -28,7 +28,7 @@ import org.robovm.apple.coregraphics.CGSize
  * Date: 2019-03-30
  * Time: 13:19
  */
-class iosCxSize(val cgSize: CGSize) : CxSize {
+data class IosCxSize(val cgSize: CGSize=CGSize()) : CxSize {
     override var width: Double
         get() = cgSize.width
         set(value) {

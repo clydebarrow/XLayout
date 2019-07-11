@@ -18,8 +18,9 @@
 
 package com.controlj.utility
 
+import com.controlj.layout.View
+import com.controlj.layout.ViewGroup
 import com.controlj.shim.MockCxFactory
-import com.controlj.shim.MockCxTransaction
 
 /**
  * Copyright (C) Control-J Pty. Ltd. ACN 103594190
@@ -34,10 +35,22 @@ class Utility {
         var initialised = false
         fun setup() {
             if (!initialised) {
-                MockCxTransaction()
                 MockCxFactory()
                 initialised = true
             }
         }
     }
 }
+/**
+ * Find the first view with the given name in the hierarchy
+ */
+
+fun ViewGroup.findViewByName(name: String): View? {
+    if (this.name == name)
+        return this
+    return childViews
+            .filterIsInstance<ViewGroup>()
+            .asSequence()
+            .map { it.findViewByName(name) }.filterNotNull().firstOrNull()
+}
+

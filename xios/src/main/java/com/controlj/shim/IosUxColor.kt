@@ -18,4 +18,21 @@
 
 package com.controlj.shim
 
-class iosCxEdgeInsets(override var top: Double, override var left: Double, override var bottom: Double, override var right: Double): UxEdgeInsets
+import org.robovm.apple.uikit.UIColor
+
+/**
+ * Copyright (C) Control-J Pty. Ltd. ACN 103594190
+ * All rights reserved
+ *
+ * User: clyde
+ * Date: 2019-03-30
+ * Time: 13:42
+ */
+class IosCxColor(val uiColor: UIColor): UxColor {
+    override val red: Double = uiColor.rgba[0]
+    override val green: Double = uiColor.rgba[1]
+    override val blue: Double = uiColor.rgba[2]
+    override val alpha: Double = uiColor.rgba[3]
+    constructor(red: Double, green: Double, blue:Double, alpha:Double): this(UIColor.fromRGBA(red, green, blue, alpha))
+}
+

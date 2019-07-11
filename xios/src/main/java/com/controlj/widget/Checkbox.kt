@@ -18,45 +18,59 @@
 
 package com.controlj.widget
 
-import com.controlj.layout.View.Companion.logMsg
 import org.robovm.apple.coregraphics.CGPoint
 import org.robovm.apple.coregraphics.CGRect
+import org.robovm.apple.coregraphics.CGSize
 import org.robovm.apple.uikit.UIBezierPath
 import org.robovm.apple.uikit.UIColor
 import org.robovm.apple.uikit.UIControl
+import org.robovm.apple.uikit.UIControlEvents
+import org.robovm.apple.uikit.UIEdgeInsets
 import org.robovm.apple.uikit.UIEvent
 
 /**
  * Created by clyde on 19/4/18.
  */
-class Checkbox : UIControl() {
+class Checkbox(var width: Double = 16.0, var height: Double = 16.0) : UIControl() {
     var borderWidth = 2.0
     var contentRatio = 0.5
     var borderColor = tintColor
     var checkColor = tintColor
-    var touchRadius = 5.0
+    var touchInsets = UIEdgeInsets(-1.0, -4.0, -1.0, -4.0)
     var checked: Boolean = false
-    set(value) {
-        field = value
-        setNeedsDisplay()
-    }
+        set(value) {
+            field = value
+            setNeedsDisplay()
+        }
+    var isOn: Boolean       // for UISwitch compatibility
+        get() = checked
+        set(value) {
+            checked = value
+        }
     private var hidden = false
+    private var touchFrame: CGRect = CGRect()
 
     override fun setHidden(p0: Boolean) {
         hidden = p0
         super.setHidden(p0)
-        logMsg("hidden = $hidden")
     }
 
     init {
         backgroundColor = UIColor.clear()
-        setUserInteractionEnabled(true)     // don't use property syntax
+        isUserInteractionEnabled = true     // don't use property syntax
+        addOnTouchUpInsideListener { _, _ ->
+            checked = !checked
+            sendControlEventsActions(UIControlEvents.ValueChanged)
+        }
+    }
+
+    override fun getSizeThatFits(p0: CGSize?): CGSize {
+        return CGSize(width, height)
     }
 
     override fun draw(rect: CGRect) {
-        logMsg("ishidden = $hidden: ")
-        if(!hidden) {
-            drawOutline(rect);
+        if (!hidden) {
+            drawOutline(rect)
             if (checked)
                 drawCheck(rect)
         }
@@ -83,8 +97,13 @@ class Checkbox : UIControl() {
         path.stroke()
     }
 
+
+    override fun layoutSubviews() {
+        super.layoutSubviews()
+        touchFrame = bounds.inset(touchInsets)
+    }
+
     override fun isPointInside(point: CGPoint, event: UIEvent): Boolean {
-        val touchFrame = bounds.inset(-touchRadius, -touchRadius)
         return touchFrame.contains(point)
     }
 }

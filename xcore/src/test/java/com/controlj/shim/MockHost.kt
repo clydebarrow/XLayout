@@ -18,7 +18,9 @@
 
 package com.controlj.shim
 
-import com.controlj.layout.IHost
+import com.controlj.layout.FrameGroup
+import com.controlj.layout.UxHost
+import com.controlj.layout.ViewGroup
 
 /**
  * Copyright (C) Control-J Pty. Ltd. ACN 103594190
@@ -28,14 +30,33 @@ import com.controlj.layout.IHost
  * Date: 2019-03-30
  * Time: 17:09
  */
-class MockHost: IHost {
-    val parent = object: MockUxView() {
-        override fun addSubview(view: UxView) {
-            view.frame = MockCxRect(MockCxPoint(), intrinsicSize)
-            super.addSubview(view)
-        }
+class MockHost(val viewGroup: ViewGroup, override val bounds: CxRect) : UxHost {
+
+    override val frameGroup = FrameGroup()
+    val subViews = mutableListOf<UxView>()
+    val layers = mutableListOf<CxLayer>()
+
+    init {
+        frameGroup.frame = bounds
+        frameGroup.add(viewGroup)
     }
-    override fun getUxView(): UxView {
-        return parent
+
+    fun attach() {
+        frameGroup.onAttach(this)
+    }
+
+    override fun addSublayer(subLayer: CxLayer) {
+        layers.add(subLayer)
+    }
+
+    override fun addSubview(subView: UxView) {
+        subViews.add(subView)
+        layers.add(subView.layer)
+    }
+
+    fun layoutSubviews() {
+        frameGroup.onMeasure(bounds.width, bounds.height)
+        frameGroup.frame = bounds
+        frameGroup.layoutSubviews()
     }
 }

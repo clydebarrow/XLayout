@@ -19,6 +19,7 @@
 package com.controlj.shim
 
 class MockCxLayer : CxLayer {
+    override var backgroundColor: UxColor = UxColor.clear()
     val subLayers = mutableListOf<CxLayer>()
     var superLayer: MockCxLayer? = null
 
@@ -41,6 +42,10 @@ class MockCxLayer : CxLayer {
     override fun addSublayer(value: CxLayer?) {
         if (value != null)
             subLayers.add(value)
+    }
+
+    override fun invalidate() {
+        println("Layer invalidated")
     }
 
     override var isHidden: Boolean = false

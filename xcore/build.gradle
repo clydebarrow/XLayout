@@ -17,9 +17,18 @@
  */
 
 apply plugin: 'java'
+apply plugin: 'idea'
 apply plugin: 'kotlin'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+idea {
+    module {
+        inheritOutputDirs = false
+        outputDir = compileJava.destinationDir
+        testOutputDir = compileTestJava.destinationDir
+    }
+}
 
 repositories {
     mavenLocal()

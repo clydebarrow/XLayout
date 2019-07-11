@@ -26,4 +26,4 @@ package com.controlj.shim
  * Date: 2019-03-30
  * Time: 10:49
  */
-class MockCxSize(override var width: Double = 0.0, override var height: Double = 0.0): CxSize
+data class MockCxSize(override var width: Double = 0.0, override var height: Double = 0.0): CxSize

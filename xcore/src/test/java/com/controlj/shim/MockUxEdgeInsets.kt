@@ -18,35 +18,9 @@
 
 package com.controlj.shim
 
-class MockUxEdgeInsets(
+data class MockUxEdgeInsets(
         override var top: Double = 0.0,
         override var left: Double = 0.0,
         override var bottom: Double = 0.0,
         override var right: Double = 0.0
-) : UxEdgeInsets {
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is UxEdgeInsets) return false
-
-        if (top != other.top) return false
-        if (left != other.left) return false
-        if (bottom != other.bottom) return false
-        if (right != other.right) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = top.hashCode()
-        result = 31 * result + left.hashCode()
-        result = 31 * result + bottom.hashCode()
-        result = 31 * result + right.hashCode()
-        return result
-    }
-
-    override fun toString(): String {
-        return "UxEdgeInsets(top=$top, left=$left, bottom=$bottom, right=$right)"
-    }
-
-}
+) : UxEdgeInsets

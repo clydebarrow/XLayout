@@ -18,13 +18,13 @@
 
 package com.controlj.layout
 
-import com.controlj.layout.NativeView.Companion.nativeView
-import com.controlj.shim.MockCxFactory
-import com.controlj.shim.MockCxTransaction
+import com.controlj.shim.MockCxRect
 import com.controlj.shim.MockUxView
 import com.controlj.utility.Utility
+import com.controlj.utility.findViewByName
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
-import org.junit.BeforeClass
 import org.junit.Test
 
 /**
@@ -44,49 +44,68 @@ class DialogViewTest {
 
     @Test
     fun dialogViewTest() {
-        val verticalLayout = VerticalLayout.verticalLayout {
+        val verticalLayout = VerticalGroup.verticalGroup {
             layout.width = 360.0
+            layout.widthMode = Layout.Mode.Absolute
+            spacing = 4.0
             name = "Outer"
         }
         // add a title view
-        val titleView = MockUxView(0.0, 20.0)
-        verticalLayout.addSubView(nativeView(titleView) {
-            layout.widthMode = Layout.Mode.MatchParent
-            layout.gravity = Gravity.Center
-            name = "TitleView"
+        val titleView = MockUxView(50.0, 20.0,
+                Layout.layout {
+                    widthMode = Layout.Mode.WrapContent
+                    gravity = Gravity.Center
+                }, "TitleView")
+        verticalLayout.add(titleView)
+        verticalLayout.add(HorizontalGroup.horizontalGroup {
+            name = "horiz1"
+            layout.widthMode = Layout.Mode.WrapContent
+            layout.margin = 5.0
+            spacing = 4.0
+            add(MockUxView(32.0, 32.0,
+                    Layout.layout {
+                        widthMode = Layout.Mode.Absolute
+                        width = 32.0
+                        heightMode = Layout.Mode.WrapContent
+
+                    }, "Image1"))
+            add(MockUxView(40.0, 30.0,
+                    Layout.layout {
+                        widthMode = Layout.Mode.Weighted
+                        weight = 1.0
+
+                    }, "Command1"))
         })
-        verticalLayout.addSubView(VerticalLayout.verticalLayout {
-            layout.widthMode = Layout.Mode.MatchParent
-            addSubView(HorizontalLayout.horizontalLayout {
-                name = "horiz1"
-                layout.widthMode = Layout.Mode.MatchParent
-                addSubView(nativeView(MockUxView(32.0, 32.0)) {
-                    layout.widthMode = Layout.Mode.Aspect
-                    layout.heightMode = Layout.Mode.MatchParent
-                    name = "Image1"
-                })
-                addSubView(nativeView(MockUxView(40.0, 30.0)) {
-                    layout.widthMode = Layout.Mode.Weighted
-                    layout.weight = 1.0
-                    name = "Command1"
-                })
-            })
-            addSubView(HorizontalLayout.horizontalLayout {
-                name = "horiz2"
-                layout.widthMode = Layout.Mode.MatchParent
-                addSubView(nativeView(MockUxView(32.0, 32.0)) {
-                    layout.widthMode = Layout.Mode.Aspect
-                    layout.heightMode = Layout.Mode.MatchParent
-                    name = "Image2"
-                })
-                addSubView(nativeView(MockUxView(40.0, 30.0)) {
-                    layout.widthMode = Layout.Mode.Weighted
-                    layout.weight = 1.0
-                    name = "Command2"
-                })
-            })
+        verticalLayout.add(HorizontalGroup.horizontalGroup {
+            name = "horiz2"
+            layout.widthMode = Layout.Mode.WrapContent
+            layout.gravity = Gravity.MiddleLeft
+            layout.margin = 5.0
+            spacing = 4.0
+            add(MockUxView(32.0, 32.0,
+                    Layout.layout {
+                        widthMode = Layout.Mode.Absolute
+                        width = 32.0
+                        heightMode = Layout.Mode.WrapContent
+                    }, "Image2"))
+            add(MockUxView(32.0, 32.0,
+                    Layout.layout {
+                        widthMode = Layout.Mode.WrapContent
+                        heightMode = Layout.Mode.WrapContent
+                    }, "Command2"))
         })
-        verticalLayout.onMeasure(768.0, 1024.0)
-        println("frame now ${verticalLayout.frame}")
+        verticalLayout.frame = MockCxRect(0.0, 0.0, 360.0, 1024.0)
+        verticalLayout.onMeasure(verticalLayout.frame.width, verticalLayout.frame.height)
+        verticalLayout.layoutSubviews()
+        assertTrue(verticalLayout.visible)
+        assertTrue(titleView.visible)
+        assertEquals(360.0, verticalLayout.measuredSize.width, 0.0)
+        assertEquals(50.0, titleView.measuredSize.width, 0.0)
+        assertEquals(155.0, titleView.frame.minX, 0.0)
+        val horiz2 = verticalLayout.findViewByName("horiz2")!!
+        assertTrue(horiz2.visible)
+        assertEquals(68.0, horiz2.measuredSize.width, 0.0)
+        assertEquals(32.0, horiz2.measuredSize.height, 0.0)
+        assertEquals(112.0, verticalLayout.measuredSize.height, 0.0)
     }
 }

@@ -18,8 +18,8 @@
 
 package com.controlj.shim
 
-import com.controlj.layout.asCGRect
 import org.robovm.apple.coreanimation.CALayer
+import org.robovm.apple.uikit.UIColor
 
 /**
  * Copyright (C) Control-J Pty. Ltd. ACN 103594190
@@ -29,17 +29,17 @@ import org.robovm.apple.coreanimation.CALayer
  * Date: 2019-03-30
  * Time: 13:46
  */
-class iosCxLayer(val caLayer: CALayer) : CxLayer {
+class IosCxLayer(val caLayer: CALayer = CALayer()) : CxLayer {
     override fun removeFromSuperlayer() {
         caLayer.removeFromSuperlayer()
     }
 
     override fun insertSublayerBelow(value: CxLayer, nextLayer: CxLayer) {
-        caLayer.insertSublayerBelow((value as iosCxLayer).caLayer, (nextLayer as iosCxLayer).caLayer)
+        caLayer.insertSublayerBelow((value as IosCxLayer).caLayer, (nextLayer as IosCxLayer).caLayer)
     }
 
     override fun addSublayer(value: CxLayer?) {
-        if (value is iosCxLayer)
+        if (value is IosCxLayer)
             caLayer.addSublayer(value.caLayer)
     }
 
@@ -49,8 +49,19 @@ class iosCxLayer(val caLayer: CALayer) : CxLayer {
             caLayer.isHidden = value
         }
     override var frame: CxRect
-        get() = iosCxRect(caLayer.frame)
+        get() = IosCxRect(caLayer.frame)
         set(value) {
-            caLayer.frame = value.asCGRect()
+            value as IosCxRect
+            caLayer.frame = value.cgRect
         }
+
+    override var backgroundColor: UxColor
+        get() = IosCxColor(UIColor(caLayer.backgroundColor))
+        set(value) {
+            caLayer.backgroundColor = (value as IosCxColor).uiColor.cgColor
+        }
+
+    override fun invalidate() {
+        caLayer.setNeedsDisplay()
+    }
 }

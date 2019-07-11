@@ -40,10 +40,40 @@ interface CxFactory {
         init(this)
     }
 
+    /**
+     * Creates an instance of the specified class
+     */
     fun <T : CxBase> create(ofClass: KClass<T>): T
 
+    /**
+     * Create a [UxColor] object from the provided components
+     */
     fun uxColor(red: Double, green: Double, blue: Double, alpha: Double): UxColor
 
+    /**
+     * Animate the changes performed in the [function] closure. The animation will run for [animationDuration]
+     * seconds, and when finished the [completion] closure will be called.
+     */
+    fun animate(animationDuration: Double, function: () -> Unit, completion: () -> Unit = {})
+
+    /**
+     * Begin transactions on layers.
+     */
+    fun beginTransaction()
+
+    /**
+     * Disable animations on the changes about to happen
+     */
+    fun disablesActions()
+
+    /**
+     * Actions in the current transaction are completed, commit the transaction.
+     */
+    fun commitTransaction()
+
+    /**
+     * Get the b
+     */
     companion object {
         /**
          * Create an object given the class
@@ -53,7 +83,12 @@ interface CxFactory {
          * Create instances of things
          */
 
-        fun uxEdgeInsets(top: Double, left: Double, bottom: Double, right: Double): UxEdgeInsets {
+        fun uxEdgeInsets(
+                top: Double = 0.0,
+                left: Double = 0.0,
+                bottom: Double = 0.0,
+                right: Double = 0.0
+        ): UxEdgeInsets {
             val e = instance.create(UxEdgeInsets::class)
             e.top = top
             e.left = left
@@ -62,6 +97,9 @@ interface CxFactory {
             return e
         }
 
+        /**
+         * Create an instance of a [CxPoint] from the supplied coordinates
+         */
         fun cxPoint(x: Double = 0.0, y: Double = 0.0): CxPoint {
             val p = instance.create(CxPoint::class)
             p.x = x
@@ -69,6 +107,9 @@ interface CxFactory {
             return p
         }
 
+        /**
+         * Create an instance of a [CxSize] from the supplied dimensions
+         */
         fun cxSize(width: Double = 0.0, height: Double = 0.0): CxSize {
             val s = instance.create(CxSize::class)
             s.width = width
@@ -76,6 +117,9 @@ interface CxFactory {
             return s
         }
 
+        /**
+         * Create an instance of a [CxRect] from the supplied origin and dimensions
+         */
         fun cxRect(origin: CxPoint, size: CxSize): CxRect {
             val r = instance.create(CxRect::class)
             r.origin = origin
@@ -83,15 +127,27 @@ interface CxFactory {
             return r
         }
 
+        /**
+         * Create an instance of a [CxRect] from the supplied origin and dimensions
+         */
         fun cxRect(x: Double = 0.0, y: Double = 0.0, width: Double = 0.0, height: Double = 0.0): CxRect {
             return cxRect(cxPoint(x, y), cxSize(width, height))
         }
 
+        /**
+         * Create an instance of a [UxView] with an optional frame
+         */
         fun uxView(frame: CxRect = cxRect()): UxView {
             val u = instance.create(UxView::class)
             u.frame = frame
             return u
         }
+
+        fun beginTransaction() = instance.beginTransaction()
+
+        fun disablesActions() = instance.disablesActions()
+
+        fun commitTransaction() = instance.commitTransaction()
 
         /**
          * The singleton implementation of this interface
@@ -104,11 +160,21 @@ interface CxFactory {
                 error("Duplicate creation of CxFactory")
             instance = inst
         }
+
         /**
          * Convenience method to create an object generically
          */
         inline fun <reified T : CxBase> create(): T {
             return instance.create(T::class)
         }
+
+        /**
+         * Animate the changes performed in the [function] closure. The animation will run for [animationDuration]
+         * seconds, and when finished the [completion] closure will be called.
+         */
+        fun animate(animationDuration: Double, function: () -> Unit, completion: () -> Unit = {}) {
+            instance.animate(animationDuration, function, completion)
+        }
+
     }
 }

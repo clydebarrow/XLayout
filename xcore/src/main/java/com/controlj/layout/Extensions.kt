@@ -32,22 +32,32 @@ fun CxRect.applyInsets(insets: UxEdgeInsets): CxRect {
             width - insets.totalWidth(), height - insets.totalHeight())
 }
 
-fun List<View>.maxWidth(): Double {
-    var width = 0.0
-    for (v in this)
-        width = Math.max(width, v.measuredSize.width + v.layout.margins.totalWidth())
-    return width
+fun List<View>.maxHeight(dflt: Double): Double {
+    // find the maximum height
+    return this.map { subView ->
+        when (subView.layout.heightMode) {
+            Layout.Mode.Absolute -> subView.layout.height + subView.layout.margins.totalHeight()
+            Layout.Mode.MatchParent,
+            Layout.Mode.WrapContent -> subView.measuredSize.height + subView.layout.margins.totalHeight()
+            Layout.Mode.Weighted -> error("Weighted height inside horizontalGroup")
+        }
+    }.max() ?: dflt
 }
 
-fun List<View>.maxHeight(): Double {
-    var height = 0.0
-    for (v in this)
-        height = Math.max(height, v.measuredSize.height + v.layout.margins.totalHeight())
-    return height
+fun List<View>.maxWidth(dflt: Double): Double {
+    // find the maximum height
+    return this.map { subView ->
+        when (subView.layout.widthMode) {
+            Layout.Mode.Absolute -> subView.layout.width + subView.layout.margins.totalWidth()
+            Layout.Mode.MatchParent,
+            Layout.Mode.WrapContent -> subView.measuredSize.width + subView.layout.margins.totalWidth()
+            Layout.Mode.Weighted -> error("Weighted width inside VerticalGroup")
+        }
+    }.max() ?: dflt
 }
 
 fun CxSize.asSizeString(): String {
-    return "{${Layout.dimToString(width)}, ${Layout.dimToString(height)}}"
+    return "{${width.asDim()}, ${height.asDim()}}"
 }
 
 fun CxSize.applyPadding(padding: UxEdgeInsets): CxSize {
@@ -59,28 +69,24 @@ fun CxSize.applyPadding(padding: Double): CxSize {
 }
 
 /**
- * Given a CxRect and a new size, apply the specified gravity to create a new CxRect.
+ * Given a CxRect and a new size, apply the specified gravity to relocate the origin
  *
  */
-fun CxRect.applyGravity(size: CxSize, g: Gravity): CxRect {
-    val left: Double
-    when (g.horizontal) {
-        Gravity.Horizontal.Right -> left = this.maxX - size.width
-        Gravity.Horizontal.Center -> left = (minX + maxX - size.width) / 2.0
-        else -> left = minX
+fun CxRect.applyGravity(width: Double, height: Double, g: Gravity): CxRect {
+    origin.x += when (g.horizontal) {
+        Gravity.Horizontal.Right -> width - size.width
+        Gravity.Horizontal.Center -> (width - size.width) / 2.0
+        else -> 0.0
     }
-    val top: Double
-    when (g.vertical) {
-        Gravity.Vertical.Bottom -> top = this.maxY - size.height
-        Gravity.Vertical.Center -> top = (maxY + minY - size.height) / 2.0
-        else -> top = minY
+    origin.y += when (g.vertical) {
+        Gravity.Vertical.Bottom -> height - size.height
+        Gravity.Vertical.Center -> (height - size.height) / 2.0
+        else -> 0.0
     }
-    return CxFactory.cxRect(left, top, size.width, size.height)
+    return this
 }
 
-/**
- * Select all the text in a text field.
- */
-//fun UITextField.selectAll() {
-//performSelector(Selector.register("selectAll"), null, 0.0)
-//}
+
+fun CxRect.applyGravity(newSize: CxSize, g: Gravity): CxRect {
+    return applyGravity(newSize.width, newSize.height, g)
+}

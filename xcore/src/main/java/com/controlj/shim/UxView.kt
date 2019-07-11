@@ -18,29 +18,38 @@
 
 package com.controlj.shim
 
-interface UxView : CxBase {
-    fun getSizeThatFits(cxSize: CxSize): CxSize {
-        return CxFactory.cxSize(
-                if (intrinsicSize.width == 0.0) cxSize.width else intrinsicSize.width,
-                if (intrinsicSize.height == 0.0) cxSize.height else intrinsicSize.height)
-    }
+import com.controlj.logging.CJLogView.logMsg
+import com.controlj.layout.UxHost
+import com.controlj.layout.Layout
+import com.controlj.layout.View
+import com.controlj.layout.asDim
 
-    fun addSubview(view: UxView)
+interface UxView : CxBase, View {
+
     fun removeFromSuperview()
 
     val intrinsicSize: CxSize
     var backgroundColor: UxColor
     val layer: CxLayer
-    var frame: CxRect
     val bounds: CxRect
         get() = CxFactory.cxRect(CxFactory.cxPoint(), frame.size)
     var autoresizingMask: Long
-    var hided: Boolean
 
-    companion object {
-        fun animate(animationDuration: Double, function: () -> Unit, completion: () -> Unit = {}) {
-        }
-
+    /**
+     * Called when this view is to be added to its parent
+     */
+    override fun onAttach(host: UxHost) {
+        // attach the view to the hosting view by adding as a subview
+        logMsg(this, "onAttach")
+        host.addSubview(this)
     }
 
+    /**
+    Overridden to remove this native view from the parent native view
+     */
+    override fun onDetach() {
+        // remove from the hosting view by removing it from the superview
+        logMsg(this, "Ondetach")
+        removeFromSuperview()
+    }
 }

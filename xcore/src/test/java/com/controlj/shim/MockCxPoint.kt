@@ -26,4 +26,4 @@ package com.controlj.shim
  * Date: 2019-03-30
  * Time: 10:50
  */
-class MockCxPoint(override var x: Double = 0.0, override var y: Double = 0.0): CxPoint
+data class MockCxPoint(override var x: Double = 0.0, override var y: Double = 0.0): CxPoint

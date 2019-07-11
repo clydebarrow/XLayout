@@ -31,6 +31,20 @@ import kotlin.reflect.KClass
  * Time: 10:51
  */
 class MockCxFactory : CxFactory {
+    override fun animate(animationDuration: Double, function: () -> Unit, completion: () -> Unit) {
+        function()
+        completion()
+    }
+
+    override fun beginTransaction() {
+    }
+
+    override fun disablesActions() {
+    }
+
+    override fun commitTransaction() {
+    }
+
     override fun uxColor(red: Double, green: Double, blue: Double, alpha: Double): UxColor {
         return MockUxColor(red, green, blue, alpha)
     }

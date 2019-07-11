@@ -18,26 +18,4 @@
 
 package com.controlj.shim
 
-import org.robovm.apple.coregraphics.CGPoint
-
-/**
- * Copyright (C) Control-J Pty. Ltd. ACN 103594190
- * All rights reserved
- *
- * User: clyde
- * Date: 2019-03-30
- * Time: 13:18
- */
-class iosCxPoint(val cgPoint: CGPoint) : CxPoint {
-    override var x: Double
-        get() = cgPoint.x
-        set(value) {
-            cgPoint.x = value
-        }
-    override var y: Double
-        get() = cgPoint.y
-        set(value) {
-            cgPoint.y = value
-        }
-
-}
+class IosCxEdgeInsets(override var top: Double, override var left: Double, override var bottom: Double, override var right: Double): UxEdgeInsets

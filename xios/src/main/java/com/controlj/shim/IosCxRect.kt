@@ -30,14 +30,14 @@ import org.robovm.apple.coregraphics.CGSize
  * Date: 2019-03-30
  * Time: 13:10
  */
-class iosCxRect(val cgRect: CGRect) : CxRect {
+data class IosCxRect(val cgRect: CGRect= CGRect()) : CxRect {
     override var origin: CxPoint
-        get() = iosCxPoint(cgRect.origin)
+        get() = IosCxPoint(cgRect.origin)
         set(value) {
             cgRect.origin = CGPoint(value.x, value.y)
         }
     override var size: CxSize
-        get() = iosCxSize(cgRect.size)
+        get() = IosCxSize(cgRect.size)
         set(value) {
             cgRect.size = CGSize(value.width, value.height)
         }

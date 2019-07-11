@@ -20,9 +20,13 @@ package com.controlj.shim
 
 interface CxLayer : CxBase {
 
+    // mark as needs redrawing
+    fun invalidate()
     fun removeFromSuperlayer()
     fun insertSublayerBelow(value: CxLayer, nextLayer: CxLayer)
     fun addSublayer(value: CxLayer?)
     var isHidden: Boolean
     var frame: CxRect
+    var backgroundColor: UxColor
+
 }

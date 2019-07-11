@@ -18,7 +18,7 @@
 
 package com.controlj.layout
 
-import com.controlj.layout.HorizontalLayout.Companion.horizontalLayout
+import com.controlj.layout.HorizontalGroup.Companion.horizontalGroup
 import com.controlj.layout.Layout.Companion.MAX_DIMENSION
 import com.controlj.layout.Layout.Companion.absolute
 import com.controlj.layout.Layout.Companion.layout
@@ -73,32 +73,31 @@ class ExtensionsKtTest {
 
     @Test
     fun maxWidth() {
-        val uiview = CxFactory.uxView(CxFactory.cxRect(0.0, 0.0, 20.0, 30.0))
-        val nv = NativeView(uiview, Layout(width = 20.0))
-        nv.measure(Layout.MAX_DIMENSION, Layout.MAX_DIMENSION)
-        val ov = NativeView(CxFactory.uxView(), Layout(width = 15.0))
-        nv.measure(Layout.MAX_DIMENSION, Layout.MAX_DIMENSION)
-        assertEquals(20.0, listOf(nv, ov).maxWidth(), 0.0)
+        val nv = (MockUxView(20.0, 20.0, Layout(width = 20.0)))
+        nv.onMeasure(Layout.MAX_DIMENSION, Layout.MAX_DIMENSION)
+        val ov = (MockUxView(2.0, 1.0, Layout(width = 15.0)))
+        ov.onMeasure(Layout.MAX_DIMENSION, Layout.MAX_DIMENSION)
+        assertEquals(20.0, listOf(nv, ov).maxWidth(100.0), 0.0)
     }
 
     @Test
     fun maxHeight() {
 
-        val horz = horizontalLayout {
+        val horz = horizontalGroup {
             layout = layout {
                 widthMode = Layout.Mode.MatchParent
                 heightMode = Layout.Mode.Absolute
                 height = 100.0
                 margin = 10.0
             }
-            addSubView(MockUxView(), absolute(10.0, 20.0))
-            addSubView(MockUxView(), absolute(10.0, 40.0))
-            addSubView(MockUxView(), absolute(10.0, 60.0))
+            add(MockUxView(height = 15.0,  layout = absolute(10.0, 20.0)))
+            add(MockUxView(layout =  absolute(10.0, 40.0)))
+            add(MockUxView(layout =  absolute(10.0, 60.0)))
         }
         horz.onMeasure(400.0, MAX_DIMENSION)
-        assertEquals(400.0, horz.measuredSize.width, 0.0)
-        assertEquals(100.0, horz.measuredSize.height, 0.0)
-        assertEquals(60.0, horz.childViews.maxHeight(), 0.0)
+        assertEquals(30.0, horz.measuredSize.width, 0.0)
+        assertEquals(60.0, horz.measuredSize.height, 0.0)
+        assertEquals(60.0, horz.childViews.maxHeight(100.0), 0.0)
     }
 
     @Test
@@ -125,57 +124,65 @@ class ExtensionsKtTest {
 
     @Test
     fun applyGravity() {
-        val startRect = MockCxRect(0.0, 0.0, 200.0, 20.0)
-        val innerSize = MockCxSize(100.0, 10.0)
-        var newRect = startRect.applyGravity(innerSize, Gravity.Center)
+        var startRect = MockCxRect(0.0, 0.0, 100.0, 10.0)
+        val outerSize = MockCxSize(200.0, 20.0)
+        var newRect = startRect.applyGravity(outerSize, Gravity.Center)
         assertEquals(50.0, newRect.minX, 0.0)
         assertEquals(5.0, newRect.minY, 0.0)
         assertEquals(100.0, newRect.width, 0.0)
         assertEquals(10.0, newRect.height, 0.0)
 
-        newRect = startRect.applyGravity(innerSize, Gravity.TopLeft)
+        startRect = MockCxRect(0.0, 0.0, 100.0, 10.0)
+        newRect = startRect.applyGravity(outerSize, Gravity.TopLeft)
         assertEquals(0.0, newRect.minX, 0.0)
         assertEquals(0.0, newRect.minY, 0.0)
         assertEquals(100.0, newRect.width, 0.0)
         assertEquals(10.0, newRect.height, 0.0)
 
-        newRect = startRect.applyGravity(innerSize, Gravity.CenterTop)
+        startRect = MockCxRect(0.0, 0.0, 100.0, 10.0)
+        newRect = startRect.applyGravity(outerSize, Gravity.CenterTop)
         assertEquals(50.0, newRect.minX, 0.0)
         assertEquals(0.0, newRect.minY, 0.0)
         assertEquals(100.0, newRect.width, 0.0)
         assertEquals(10.0, newRect.height, 0.0)
 
-        newRect = startRect.applyGravity(innerSize, Gravity.TopRight)
+        startRect = MockCxRect(0.0, 0.0, 100.0, 10.0)
+        newRect = startRect.applyGravity(outerSize, Gravity.TopRight)
         assertEquals(100.0, newRect.minX, 0.0)
         assertEquals(0.0, newRect.minY, 0.0)
         assertEquals(100.0, newRect.width, 0.0)
         assertEquals(10.0, newRect.height, 0.0)
 
-        newRect = startRect.applyGravity(innerSize, Gravity.MiddleRight)
+        startRect = MockCxRect(0.0, 0.0, 100.0, 10.0)
+        newRect = startRect.applyGravity(outerSize, Gravity.MiddleRight)
         assertEquals(100.0, newRect.minX, 0.0)
         assertEquals(5.0, newRect.minY, 0.0)
         assertEquals(100.0, newRect.width, 0.0)
         assertEquals(10.0, newRect.height, 0.0)
 
-        newRect = startRect.applyGravity(innerSize, Gravity.BottomRight)
+        startRect = MockCxRect(0.0, 0.0, 100.0, 10.0)
+        newRect = startRect.applyGravity(outerSize, Gravity.BottomRight)
         assertEquals(100.0, newRect.minX, 0.0)
         assertEquals(10.0, newRect.minY, 0.0)
         assertEquals(100.0, newRect.width, 0.0)
         assertEquals(10.0, newRect.height, 0.0)
 
-        newRect = startRect.applyGravity(innerSize, Gravity.CenterBottom)
+        startRect = MockCxRect(0.0, 0.0, 100.0, 10.0)
+        newRect = startRect.applyGravity(outerSize, Gravity.CenterBottom)
         assertEquals(50.0, newRect.minX, 0.0)
         assertEquals(10.0, newRect.minY, 0.0)
         assertEquals(100.0, newRect.width, 0.0)
         assertEquals(10.0, newRect.height, 0.0)
 
-        newRect = startRect.applyGravity(innerSize, Gravity.BottomLeft)
+        startRect = MockCxRect(0.0, 0.0, 100.0, 10.0)
+        newRect = startRect.applyGravity(outerSize, Gravity.BottomLeft)
         assertEquals(0.0, newRect.minX, 0.0)
         assertEquals(10.0, newRect.minY, 0.0)
         assertEquals(100.0, newRect.width, 0.0)
         assertEquals(10.0, newRect.height, 0.0)
 
-        newRect = startRect.applyGravity(innerSize, Gravity.MiddleLeft)
+        startRect = MockCxRect(0.0, 0.0, 100.0, 10.0)
+        newRect = startRect.applyGravity(outerSize, Gravity.MiddleLeft)
         assertEquals(0.0, newRect.minX, 0.0)
         assertEquals(5.0, newRect.minY, 0.0)
         assertEquals(100.0, newRect.width, 0.0)

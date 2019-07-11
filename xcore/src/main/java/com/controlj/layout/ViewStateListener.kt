@@ -37,7 +37,7 @@ interface ViewStateListener {
      * called when the view is attached to a host.
      * @param host the new UILayouthost to which this view is attached
      */
-    fun onAttach(host: IHost)
+    fun onAttach(host: UxHost)
 
     /**
      * Called when the view is detached from its host

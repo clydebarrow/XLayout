@@ -18,14 +18,36 @@
 
 package com.controlj.layout
 
+import com.controlj.shim.CxLayer
+import com.controlj.shim.CxRect
 import com.controlj.shim.UxView
 
 /**
  * An interface between a viewgroup and the native host
  */
-interface IHost {
+interface UxHost {
+
     /**
-     * Get the parent view. This represents the superview of the entire view tree.
+     * The base [FrameGroup] of this host. Add children to this.
      */
-    fun getUxView(): UxView
+
+    val frameGroup: FrameGroup
+
+    /**
+     * The bounds of the host. Always zero-referenced
+     */
+
+    val bounds: CxRect
+
+    /**
+     * Add a sublayer below the given layer - i.e. the [other] layer will render on top of [subLayer]
+     * If [other] is null, simply add this layer to the host
+     */
+    fun addSublayer(subLayer: CxLayer)
+
+    /**
+     * Add the [subView] to this host's view
+     */
+    fun addSubview(subView: UxView)
+
 }
