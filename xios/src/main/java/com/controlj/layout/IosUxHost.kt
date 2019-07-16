@@ -30,6 +30,8 @@ import com.controlj.shim.asUxEdgeInsets
 import org.robovm.apple.coregraphics.CGSize
 import org.robovm.apple.foundation.NSOperatingSystemVersion
 import org.robovm.apple.foundation.NSProcessInfo
+import org.robovm.apple.uikit.UILayoutFittingSize
+import org.robovm.apple.uikit.UILayoutPriority
 import org.robovm.apple.uikit.UIView
 
 /**
@@ -61,11 +63,19 @@ open class IosUxHost(vararg views: View) : UIView(), UxHost {
         addSubview(subView.uiview)
     }
 
-    override fun getSizeThatFits(size: CGSize): CGSize {
+    override fun getSystemLayoutSizeFittingSize(size: CGSize, p1: Float, p2: Float): CGSize {
         logMsg(frameGroup, "SizeThatFits($size)")
         frameGroup.onMeasure(size.width, size.height)
         logMsg(frameGroup, "FrameGroup measured size = ${frameGroup.measuredSize}")
         return (frameGroup.measuredSize as IosCxSize).cgSize
+    }
+
+    override fun getSystemLayoutSizeFittingSize(size: UILayoutFittingSize): CGSize {
+        return getSystemLayoutSizeFittingSize(
+                size.value(),
+                UILayoutPriority.DefaultLow.toFloat(),
+                UILayoutPriority.DefaultLow.toFloat()
+        )
     }
 
     override fun layoutSubviews() {
@@ -82,29 +92,18 @@ open class IosUxHost(vararg views: View) : UIView(), UxHost {
         frameGroup.onMeasure(subViewPosition.width, subViewPosition.height)
         logMsg(frameGroup, "frame=$frame, bounds=$bounds, subViewPosition=${subViewPosition}")
         frameGroup.layoutSubviews()
+        frameGroup.onShown()
     }
 
     override fun willMoveToSuperview(superView: UIView?) {
         super.willMoveToSuperview(superView)
-        if (superView == null)
+        if (superView == null) {
             frameGroup.onDetach()
+            frameGroup.onHidden()
+        }
         else {
             frameGroup.onAttach(this)
         }
-    }
-
-    /**
-     * Should be called by the enclosing UIViewController when the view becomes visible, e.g. from viewWillAppear
-     */
-    fun onShown() {
-        frameGroup.onShown()
-    }
-
-    /**
-     * Should be called when the view becomes hidden, e.g. from viewDidDisappear
-     */
-    fun onHidden() {
-        frameGroup.onHidden()
     }
 
     companion object {

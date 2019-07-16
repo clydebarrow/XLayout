@@ -33,8 +33,13 @@ import com.controlj.shim.UxView
  * @param layout The layout parameters to be applied to this group. Default is to match the parent.
  * @constructor Creates a group with the supplied list of subviews
  */
-abstract class ViewGroup(override var layout: Layout = Layout(), override var name: String = "") : View {
+abstract class ViewGroup(override var layout: Layout = Layout(), private var viewName: String = "") : View {
 
+    override var name: String
+        get() = if (viewName.isNotBlank()) viewName else javaClass.simpleName.toString()
+        set(value) {
+            viewName = value
+        }
     override var row: Int = 0
     override var column: Int = 0
     override var parent: ViewGroup? = null
@@ -173,4 +178,8 @@ abstract class ViewGroup(override var layout: Layout = Layout(), override var na
     }
 
     open fun dividerLayout(thickness: Double): Layout = Layout.layout { name = "Divider" }
+
+    override fun debugString(): String {
+        return childViews.map { it.debugString() }.joinToString(", ", "$name: $frame: {", "}")
+    }
 }

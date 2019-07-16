@@ -110,4 +110,8 @@ interface View : ViewStateListener {
     fun layoutSubviews() {
 
     }
+
+    fun debugString(): String {
+        return "$name: $frame"
+    }
 }

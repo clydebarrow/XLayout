@@ -25,7 +25,11 @@ import org.robovm.apple.coregraphics.CGSize
 import org.robovm.apple.uikit.UIView
 import org.robovm.apple.uikit.UIViewAutoresizing
 
-data class IosUxView(val uiview: UIView = UIView(), override var layout: Layout = Layout(), override var name: String = uiview::class.simpleName.toString()) : UxView {
+data class IosUxView(
+        val uiview: UIView = UIView(),
+        override var layout: Layout = Layout(),
+        override var name: String = uiview::class.simpleName.toString()
+) : UxView {
 
     override fun onMeasure(availableWidth: Double, availableHeight: Double) {
         val cgSize = uiview.getSizeThatFits(CGSize(availableWidth, availableHeight))
