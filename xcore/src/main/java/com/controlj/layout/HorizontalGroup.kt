@@ -54,7 +54,7 @@ open class HorizontalGroup(
             )
         }
         // find the maximum height
-        measuredSize.height = visibleViews.maxHeight(availableHeight).coerceAtLeast(0.0)
+        measuredSize.height = visibleViews.maxHeight(0.0).coerceAtLeast(0.0)
         //if (measuredSize.height == 0.0) measuredSize.height = availableHeight
 
         // calculate the fixed width
@@ -62,16 +62,13 @@ open class HorizontalGroup(
             when (subView.layout.widthMode) {
                 Layout.Mode.Absolute -> subView.layout.width + subView.layout.margins.totalWidth()
                 Layout.Mode.WrapContent -> subView.measuredSize.width + subView.layout.margins.totalWidth()
-                Layout.Mode.Weighted -> subView.layout.margins.totalWidth()
-                Layout.Mode.MatchParent -> if (visibleViews.size == 1) subView.layout.margins.totalWidth() else
-                    error("MatchParent makes no sense for ${subView.name} in a horizontalGroup")
+                Layout.Mode.Weighted, Layout.Mode.MatchParent -> subView.layout.margins.totalWidth()
             }
         }.sum() + spacing * (visibleViews.size - 1).coerceAtLeast(0)
         measuredSize.width = totalFixedSize
         totalWeight = visibleViews.filter {
             it.layout.widthMode == Layout.Mode.Weighted || it.layout.widthMode == Layout.Mode.MatchParent
-        }
-                .sumByDouble { it.layout.weight }
+        }.sumByDouble { it.layout.weight }
 
         // calculate total size of variable elements
         // there are weighted elements
@@ -103,14 +100,12 @@ open class HorizontalGroup(
                         frame.minY + v.layout.margins.top,
                         when (v.layout.widthMode) {
                             Layout.Mode.Absolute -> v.layout.width
-                            Layout.Mode.Weighted,
-                            Layout.Mode.MatchParent -> boxWidth
+                            Layout.Mode.Weighted, Layout.Mode.MatchParent -> boxWidth
                             else -> v.measuredSize.width
                         },
                         when (v.layout.heightMode) {
                             Layout.Mode.Absolute -> v.layout.height
-                            Layout.Mode.Weighted,
-                            Layout.Mode.MatchParent -> boxHeight
+                            Layout.Mode.Weighted, Layout.Mode.MatchParent -> boxHeight
                             else -> v.measuredSize.height
                         }
                 ).applyGravity(boxWidth, boxHeight, v.layout.gravity)

@@ -52,7 +52,7 @@ open class VerticalGroup(layout: Layout = Layout()) : ViewGroup(layout) {
             )
         }
         // find the maximum width
-        measuredSize.width = visibleViews.maxWidth(availableWidth).coerceAtLeast(0.0)
+        measuredSize.width = visibleViews.maxWidth(0.0).coerceAtLeast(0.0)
         //if (measuredSize.width == 0.0) measuredSize.width = availableWidth
 
         // calculate the fixed height
@@ -60,9 +60,7 @@ open class VerticalGroup(layout: Layout = Layout()) : ViewGroup(layout) {
             when (subView.layout.heightMode) {
                 Layout.Mode.Absolute -> subView.layout.height + subView.layout.margins.totalHeight()
                 Layout.Mode.WrapContent -> subView.measuredSize.height + subView.layout.margins.totalHeight()
-                Layout.Mode.Weighted -> subView.layout.margins.totalHeight()
-                Layout.Mode.MatchParent -> if (visibleViews.size == 1) subView.layout.margins.totalHeight() else
-                    error("MatchParent makes no sense for ${subView.name} in a verticalGroup")
+                Layout.Mode.Weighted, Layout.Mode.MatchParent -> subView.layout.margins.totalHeight()
             }
         }.sum() + spacing * (visibleViews.size - 1).coerceAtLeast(0)
         totalWeight = visibleViews.filter {

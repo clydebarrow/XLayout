@@ -19,13 +19,15 @@
 package com.controlj.widget
 
 import org.robovm.apple.coregraphics.CGRect
+import org.robovm.apple.coregraphics.CGSize
 import org.robovm.apple.uikit.UIEdgeInsets
 import org.robovm.apple.uikit.UILabel
+import org.robovm.apple.uikit.UITextField
 
 /**
  * Created by clyde on 17/4/18.
  */
-class UILabelPadded(padding: UIEdgeInsets = UIEdgeInsets.Zero()) : UILabel() {
+class UITextFieldPadded(padding: UIEdgeInsets = UIEdgeInsets.Zero()) : UITextField() {
 
     var padding = padding
         set(value) {
@@ -33,12 +35,12 @@ class UILabelPadded(padding: UIEdgeInsets = UIEdgeInsets.Zero()) : UILabel() {
             invalidateIntrinsicContentSize()
         }
 
-    override fun getTextRect(bounds: CGRect, lineLimit: Long): CGRect {
-        val textRect = super.getTextRect(bounds, lineLimit)
-        return textRect.inset(UIEdgeInsets(-padding.top, -padding.left, -padding.bottom, -padding.right))
+    override fun getTextRect(bounds: CGRect): CGRect {
+        val textRect = super.getTextRect(bounds)
+        return textRect.inset(padding)
     }
 
-    override fun drawText(rect: CGRect) {
-        super.drawText(rect.inset(padding))
+    override fun getEditingRect(p0: CGRect): CGRect {
+        return getTextRect(p0)
     }
 }

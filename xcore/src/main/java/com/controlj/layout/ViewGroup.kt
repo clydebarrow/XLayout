@@ -180,6 +180,7 @@ abstract class ViewGroup(override var layout: Layout = Layout(), private var vie
     open fun dividerLayout(thickness: Double): Layout = Layout.layout { name = "Divider" }
 
     override fun debugString(): String {
-        return childViews.map { it.debugString() }.joinToString(", ", "$name: $frame: {", "}")
+        val prefix =  super.debugString()
+        return childViews.map { it.debugString() }.joinToString("\n", "$prefix: {\n", "}")
     }
 }

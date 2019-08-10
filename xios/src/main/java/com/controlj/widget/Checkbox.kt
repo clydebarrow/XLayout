@@ -31,11 +31,16 @@ import org.robovm.apple.uikit.UIEvent
 /**
  * Created by clyde on 19/4/18.
  */
-class Checkbox(var width: Double = 16.0, var height: Double = 16.0) : UIControl() {
+class Checkbox(var width: Double = 20.0, var height: Double = 20.0) : UIControl() {
+    companion object {
+        const val PADDING = 4.0
+    }
+
     var borderWidth = 2.0
     var contentRatio = 0.5
     var borderColor = tintColor
     var checkColor = tintColor
+    var padding = UIEdgeInsets(PADDING, PADDING, PADDING, PADDING)
     var touchInsets = UIEdgeInsets(-1.0, -4.0, -1.0, -4.0)
     var checked: Boolean = false
         set(value) {
@@ -49,6 +54,22 @@ class Checkbox(var width: Double = 16.0, var height: Double = 16.0) : UIControl(
         }
     private var hidden = false
     private var touchFrame: CGRect = CGRect()
+    private var boxPath = UIBezierPath.newRect(CGRect(0.0, 0.0, width, height))
+    private var tickPath = UIBezierPath()
+
+    override fun setFrame(frame: CGRect) {
+        super.setFrame(frame)
+        // create a path centered in the frame of the correct size
+        val boxRect = CGRect((frame.width - width) / 2, (frame.height - height) / 2, width, height)
+        boxPath = UIBezierPath.newRect(boxRect)
+        tickPath = UIBezierPath()
+        val insH = boxRect.width * contentRatio / 2
+        val insV = boxRect.height * contentRatio / 2
+        val newrect = boxRect.inset(insH, insV)
+        tickPath.move(CGPoint(newrect.minX + .045 * newrect.width, newrect.minY + 0.64 * newrect.height))
+        tickPath.addLine(CGPoint(newrect.minX + .35 * newrect.width, newrect.minY + 0.95 * newrect.height))
+        tickPath.addLine(CGPoint(newrect.minX + .95 * newrect.width, newrect.minY + 0.05 * newrect.height))
+    }
 
     override fun setHidden(p0: Boolean) {
         hidden = p0
@@ -65,38 +86,29 @@ class Checkbox(var width: Double = 16.0, var height: Double = 16.0) : UIControl(
     }
 
     override fun getSizeThatFits(p0: CGSize?): CGSize {
-        return CGSize(width, height)
+        return CGSize(width + padding.left + padding.right, height + padding.top + padding.bottom)
     }
 
     override fun draw(rect: CGRect) {
+        super.draw(rect)
         if (!hidden) {
-            drawOutline(rect)
+            drawOutline()
             if (checked)
-                drawCheck(rect)
+                drawCheck()
         }
     }
 
-    private fun drawOutline(rect: CGRect) {
-        val path = UIBezierPath.newRect(rect)
-        path.lineWidth = borderWidth
+    private fun drawOutline() {
+        boxPath.lineWidth = borderWidth
         borderColor.setStroke()
-        path.stroke()
-        backgroundColor.setFill()
-        path.fill()
+        boxPath.stroke()
     }
 
-    private fun drawCheck(rect: CGRect) {
-        val path = UIBezierPath()
-        val insH = rect.width * contentRatio / 2
-        val insV = rect.height * contentRatio / 2
-        val newrect = rect.inset(insH, insV)
-        path.move(CGPoint(newrect.minX + .045 * newrect.width, newrect.minY + 0.64 * newrect.height))
-        path.addLine(CGPoint(newrect.minX + .35 * newrect.width, newrect.minY + 0.95 * newrect.height))
-        path.addLine(CGPoint(newrect.minX + .95 * newrect.width, newrect.minY + 0.05 * newrect.height))
+    private fun drawCheck() {
         checkColor.setStroke()
-        path.stroke()
+        tickPath.lineWidth = borderWidth
+        tickPath.stroke()
     }
-
 
     override fun layoutSubviews() {
         super.layoutSubviews()

@@ -84,13 +84,25 @@ class Layout(
             return Layout().apply(config)
         }
 
+        fun fill(): Layout {
+            return Layout(widthMode = Mode.MatchParent, heightMode = Mode.MatchParent)
+        }
+
         fun absolute(width: Double, height: Double): Layout {
             return Layout(width, Mode.Absolute, height, Mode.Absolute)
         }
     }
 
     override fun toString(): String {
-        return "Horz[${width.asDim()} $widthMode Gravity:${gravity.horizontal}] Vert[${height.asDim()} $heightMode Gravity:${gravity.vertical}] Weight: $weight"
+        return "Horz[${dimToString(widthMode, width, weight)}:${gravity.horizontal}] Vert[${dimToString(heightMode, height, weight)}:${gravity.vertical}]"
+    }
+
+    private fun dimToString(mode: Mode, dim: Double, weight: Double): String {
+        return when(mode) {
+            Mode.Absolute -> dim.asDim()
+            Mode.MatchParent, Mode.WrapContent -> mode.name
+            Mode.Weighted -> "Weighted($weight)"
+        }
     }
 }
 

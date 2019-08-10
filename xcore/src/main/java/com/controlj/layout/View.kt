@@ -112,6 +112,6 @@ interface View : ViewStateListener {
     }
 
     fun debugString(): String {
-        return "$name: $frame"
+        return "$name: frame=$frame, measured=$measuredSize, layout=$layout"
     }
 }

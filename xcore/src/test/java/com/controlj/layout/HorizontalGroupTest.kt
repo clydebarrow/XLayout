@@ -36,12 +36,35 @@ class HorizontalGroupTest {
     @Test
     fun testSingle() {
 
-        val layout = HorizontalGroup(Layout(heightMode = Layout.Mode.MatchParent))
+        val layout = HorizontalGroup()
         layout.add(MockUxView(100.0, 0.0, Layout(heightMode = Layout.Mode.MatchParent)))
         val screenbounds = MockUxScreen.mainScreen.bounds
         layout.onMeasure(screenbounds.width, screenbounds.height)
+        layout.frame = screenbounds
+        layout.layoutSubviews()
         assertEquals(100.0, layout.measuredSize.width, 0.0)
-        assertEquals(screenbounds.height, layout.measuredSize.height, 0.0)
+        assertEquals(screenbounds.height, layout.childViews.first().frame.height, 0.0)
+    }
+
+    @Test
+    fun testNested() {
+
+        val screenbounds = MockUxScreen.mainScreen.bounds
+        val layout = HorizontalGroup()
+        layout.add(MockUxView(100.0, 0.0, Layout(heightMode = Layout.Mode.MatchParent)))
+        val inner = HorizontalGroup(Layout(widthMode = Layout.Mode.Weighted, heightMode = Layout.Mode.MatchParent))
+
+        val left = MockUxView(50.0, 50.0, Layout(widthMode = Layout.Mode.Weighted))
+        val right = MockUxView(50.0, 50.0, Layout())
+        inner.add(left, right)
+        layout.add(inner)
+        layout.onMeasure(screenbounds.width, screenbounds.height)
+        layout.frame = screenbounds
+        layout.layoutSubviews()
+        assertEquals(inner.frame.width, screenbounds.width - 100.0, 0.0)
+        assertEquals(inner.frame.width, screenbounds.width - 100.0, 0.0)
+        assertEquals(right.frame.width, 50.0, 0.0)
+        assertEquals(left.frame.width, screenbounds.width - 100.0 - 50.0, 0.0)
     }
 
     @Test
@@ -89,8 +112,8 @@ class HorizontalGroupTest {
         layout.frame = screenbounds
         layout.layoutSubviews()
         assertEquals(screenbounds.maxY - 1.0, right.frame.maxY, 0.0)
-        assertEquals(screenbounds.maxX-1, right.frame.maxX, 0.1)
-        assertEquals(screenbounds.maxY-1, right.frame.maxY, 0.1)
+        assertEquals(screenbounds.maxX - 1, right.frame.maxX, 0.1)
+        assertEquals(screenbounds.maxY - 1, right.frame.maxY, 0.1)
         assertEquals(0.0, left.frame.minX, 0.01)
         assertEquals(255.0, left.frame.maxX, 0.01)
         assertEquals(257.0, right.frame.minX, 0.01)
