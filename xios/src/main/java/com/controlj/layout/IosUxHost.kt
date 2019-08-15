@@ -64,9 +64,7 @@ open class IosUxHost(vararg views: View) : UIView(), UxHost {
     }
 
     override fun getSystemLayoutSizeFittingSize(size: CGSize, p1: Float, p2: Float): CGSize {
-        logMsg(frameGroup, "SizeThatFits($size)")
         frameGroup.onMeasure(size.width, size.height)
-        logMsg(frameGroup, "FrameGroup measured size = ${frameGroup.measuredSize}")
         return (frameGroup.measuredSize as IosCxSize).cgSize
     }
 
@@ -90,7 +88,6 @@ open class IosUxHost(vararg views: View) : UIView(), UxHost {
                 }).applyInsets(frameGroup.layout.margins)
         frameGroup.frame = subViewPosition
         frameGroup.onMeasure(subViewPosition.width, subViewPosition.height)
-        logMsg(frameGroup, "frame=$frame, bounds=$bounds, subViewPosition=${subViewPosition}")
         frameGroup.layoutSubviews()
         frameGroup.onShown()
     }

@@ -18,11 +18,11 @@
 
 package com.controlj.layout
 
-import com.controlj.logging.CJLogView.logMsg
 import com.controlj.layout.Layout.Companion.MAX_DIMENSION
 import org.robovm.apple.coregraphics.CGPoint
 import org.robovm.apple.coregraphics.CGRect
 import org.robovm.apple.coregraphics.CGSize
+import org.robovm.apple.uikit.UILayoutPriority
 import org.robovm.apple.uikit.UIScrollView
 import org.robovm.apple.uikit.UIView
 import org.robovm.apple.uikit.UIViewAutoresizing
@@ -31,7 +31,7 @@ import org.robovm.apple.uikit.UIViewAutoresizing
  * Created by clyde on 8/4/18.
  */
 open class UxScrollViewHost(layout: Layout = Layout()) : UIScrollView() {
-    val layoutHost = IosUxHost()
+    private val layoutHost = IosUxHost()
 
     val frameGroup: FrameGroup
         get() = layoutHost.frameGroup
@@ -41,6 +41,7 @@ open class UxScrollViewHost(layout: Layout = Layout()) : UIScrollView() {
         //autoresizingMask = UIViewAutoresizing.with(UIViewAutoresizing.FlexibleHeight, UIViewAutoresizing.FlexibleWidth)
         frameGroup.layout = layout
     }
+
     override fun willMoveToSuperview(superView: UIView?) {
         super.willMoveToSuperview(superView)
         if (superView == null)
@@ -48,15 +49,22 @@ open class UxScrollViewHost(layout: Layout = Layout()) : UIScrollView() {
         else {
             addSubview(layoutHost)
         }
-        logMsg(frameGroup, "UxScrollviewHost#willmovetosuperview, framegroup has ${frameGroup.childViews.count()} childviews, this has ${subviews.count()} subviews")
     }
 
     override fun layoutSubviews() {
-        if(bounds.isEmpty)
+        if (bounds.isEmpty)
             return
-        val size = layoutHost.getSizeThatFits(CGSize(bounds.width, MAX_DIMENSION))
-        layoutHost.frame = bounds
+        val size = layoutHost.getSystemLayoutSizeFittingSize(
+                CGSize(bounds.width, MAX_DIMENSION),
+                UILayoutPriority.DefaultLow.toFloat(),
+                UILayoutPriority.DefaultLow.toFloat()
+        )
+        layoutHost.frame = CGRect(CGPoint.Zero(), CGSize(bounds.width, size.height.coerceAtLeast(bounds.height)))
         layoutHost.layoutSubviews()
-        contentSize = size
+        contentSize = layoutHost.frame.size
+        setShowsHorizontalScrollIndicator(size.width > bounds.width)
+        setShowsVerticalScrollIndicator(size.height > bounds.height)
+        isScrollEnabled = true
+        isUserInteractionEnabled = true
     }
 }
