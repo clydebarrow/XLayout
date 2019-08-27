@@ -88,6 +88,11 @@ class Layout(
             return Layout(widthMode = Mode.MatchParent, heightMode = Mode.MatchParent)
         }
 
+        fun matchWidth(): Layout = Layout(widthMode = Mode.MatchParent)
+        fun matchHeight(): Layout = Layout(heightMode = Mode.MatchParent)
+        fun weightedWidth(weight: Double = 1.0): Layout = Layout(widthMode = Mode.Weighted, weight = weight)
+        fun weightedHeight(weight: Double = 1.0): Layout = Layout(heightMode = Mode.Weighted, weight = weight)
+
         fun absolute(width: Double, height: Double): Layout {
             return Layout(width, Mode.Absolute, height, Mode.Absolute)
         }
