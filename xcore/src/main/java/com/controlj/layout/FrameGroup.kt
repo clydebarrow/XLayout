@@ -28,7 +28,7 @@ import com.controlj.shim.CxFactory
  * determine where in the FrameGroup the child appears. The position of each child is independent of
  * all other children
  */
-open class FrameGroup(layout: Layout = Layout()) : ViewGroup(layout) {
+open class FrameGroup(layout: Layout = Layout(), name: String = "") : ViewGroup(layout, name) {
 
     /**
      * The measured size of a frame group is the smallest box that will enclose all its subviews.
