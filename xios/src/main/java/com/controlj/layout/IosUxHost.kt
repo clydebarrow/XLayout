@@ -76,6 +76,10 @@ open class IosUxHost(vararg views: View) : UIView(), UxHost {
         )
     }
 
+    override fun getIntrinsicContentSize(): CGSize {
+        return super.getIntrinsicContentSize()
+    }
+
     override fun layoutSubviews() {
         logMsg(frameGroup, "in layoutSubviews, frame =$frame")
         if(frame.isEmpty)
