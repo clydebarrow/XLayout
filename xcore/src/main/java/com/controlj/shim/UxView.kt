@@ -40,7 +40,6 @@ interface UxView : CxBase, View {
      */
     override fun onAttach(host: UxHost) {
         // attach the view to the hosting view by adding as a subview
-        logMsg(this, "onAttach")
         host.addSubview(this)
     }
 
@@ -49,7 +48,6 @@ interface UxView : CxBase, View {
      */
     override fun onDetach() {
         // remove from the hosting view by removing it from the superview
-        logMsg(this, "Ondetach")
         removeFromSuperview()
     }
 }

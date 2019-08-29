@@ -10,7 +10,7 @@ package com.controlj.shim
  *
  * A generic button UI element
  */
-interface UxButton: UxView {
+interface UxButton: UxView, UxPadded {
     var text: String        // the text of the button
     var image: String       // the name of the image, if any
     var textColor: UxColor  // the text color

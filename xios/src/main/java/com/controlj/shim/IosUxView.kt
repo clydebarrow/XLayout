@@ -18,7 +18,6 @@
 
 package com.controlj.shim
 
-import com.controlj.logging.CJLogView.logMsg
 import com.controlj.layout.Layout
 import com.controlj.layout.ViewGroup
 import org.robovm.apple.coregraphics.CGSize
@@ -29,13 +28,17 @@ open class IosUxView(
         val uiview: UIView = UIView(),
         override var layout: Layout = Layout(),
         override var name: String = uiview::class.simpleName.toString()
-) : UxView {
+) : UxView, UxPadded {
+
+    override var paddingLeft: Double = 0.0
+    override var paddingRight: Double = 0.0
+    override var paddingTop: Double = 0.0
+    override var paddingBottom: Double = 0.0
 
     override fun onMeasure(availableWidth: Double, availableHeight: Double) {
         val cgSize = uiview.getSizeThatFits(CGSize(availableWidth, availableHeight))
-        measuredSize.width = cgSize.width
-        measuredSize.height = cgSize.height
-        logMsg(this, "onMeasure yielded $measuredSize")
+        measuredSize.width = cgSize.width + paddingLeft + paddingRight
+        measuredSize.height = cgSize.height + paddingTop + paddingBottom
     }
 
     override fun removeFromSuperview() {
@@ -44,6 +47,7 @@ open class IosUxView(
 
     override val intrinsicSize: CxSize
         get() = IosCxSize(uiview.intrinsicContentSize)
+
     override var backgroundColor: UxColor
         get() = IosCxColor(uiview.backgroundColor)
         set(value) {
@@ -56,7 +60,6 @@ open class IosUxView(
         get() = IosCxRect(uiview.frame)
         set(value) {
             value as IosCxRect
-            logMsg(this, "frame set to $value; parent frame = ${uiview.superview?.frame}")
             uiview.frame = value.cgRect
         }
     override var autoresizingMask: Long

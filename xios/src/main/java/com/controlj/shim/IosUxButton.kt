@@ -1,6 +1,7 @@
 package com.controlj.shim
 
 import com.controlj.layout.Layout
+import org.robovm.apple.coregraphics.CGSize
 import org.robovm.apple.uikit.UIButton
 import org.robovm.apple.uikit.UIControlState
 import org.robovm.apple.uikit.UIImage
@@ -19,6 +20,7 @@ class IosUxButton(
         name: String = uiButton::class.simpleName.toString()
 
 ) : IosUxView(uiButton, layout, name), UxButton {
+
     override var text: String
         get() = uiButton.getTitle(UIControlState.Normal)
         set(value) {
@@ -39,4 +41,5 @@ class IosUxButton(
     init {
         uiButton.addOnTouchUpInsideListener { _, _ -> action(this) }
     }
+
 }
