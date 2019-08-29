@@ -36,9 +36,13 @@ interface UxColor : CxBase {
         fun darkGray(): UxColor = CxFactory.instance.uxColor(0.333, 0.333, 0.333, 1.0)
         fun clear(): UxColor = CxFactory.instance.uxColor(0.0, 0.0, 0.0, 0.0)
         fun white(): UxColor = CxFactory.instance.uxColor(1.0, 1.0, 1.0, 1.0)
+        fun black(): UxColor = CxFactory.instance.uxColor(0.0, 0.0, 0.0, 1.0)
         fun fromWhiteAlpha(white: Double, alpha: Double): UxColor {
             return CxFactory.instance.uxColor(white, white, white, alpha)
         }
 
+        fun fromInt(intVal: Int): UxColor {
+            return CxFactory.instance.uxColor(intVal)
+        }
     }
 }

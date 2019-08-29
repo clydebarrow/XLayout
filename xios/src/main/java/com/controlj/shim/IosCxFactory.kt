@@ -11,7 +11,7 @@ import kotlin.reflect.KClass
  * Time: 07:00
  */
 @Suppress("UNCHECKED_CAST")
-class IosCxFactory: CxFactory {
+class IosCxFactory : CxFactory {
     override fun animate(animationDuration: Double, function: () -> Unit, completion: () -> Unit) {
         function()
         completion()
@@ -42,6 +42,7 @@ class IosCxFactory: CxFactory {
             UxView::class -> IosUxView() as T
             UxEdgeInsets::class -> IosUxEdgeInsets() as T
             CxLayer::class -> IosCxLayer() as T
+            UxButton::class -> IosUxButton() as T
             else -> error("Unknown Cx class ${ofClass.simpleName}")
         }
     }

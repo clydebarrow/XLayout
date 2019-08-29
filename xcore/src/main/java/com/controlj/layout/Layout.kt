@@ -90,6 +90,7 @@ class Layout(
 
         fun matchWidth(): Layout = Layout(widthMode = Mode.MatchParent)
         fun matchHeight(): Layout = Layout(heightMode = Mode.MatchParent)
+        fun matchParent(): Layout = Layout(heightMode = Mode.MatchParent, widthMode = Mode.MatchParent)
         fun weightedWidth(weight: Double = 1.0): Layout = Layout(widthMode = Mode.Weighted, weight = weight)
         fun weightedHeight(weight: Double = 1.0): Layout = Layout(heightMode = Mode.Weighted, weight = weight)
 

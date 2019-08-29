@@ -50,6 +50,19 @@ interface CxFactory {
      */
     fun uxColor(red: Double, green: Double, blue: Double, alpha: Double): UxColor
 
+    fun uxColor(red: Int, green: Int, blue: Int, alpha: Int = 0xFF): UxColor {
+        return uxColor(red / 255.0, green / 255.0, blue / 255.0, alpha / 255.0)
+    }
+
+    fun uxColor(intVal: Int): UxColor {
+        return CxFactory.instance.uxColor(
+                (intVal shr 16) and 0xFF,
+                (intVal shr 8) and 0xFF,
+                intVal and 0xFF,
+                if (intVal and 0xFF000000.toInt() == 0) 0xFF else (intVal shr 24) and 0xFF
+        )
+    }
+
     /**
      * Animate the changes performed in the [function] closure. The animation will run for [animationDuration]
      * seconds, and when finished the [completion] closure will be called.
@@ -143,6 +156,18 @@ interface CxFactory {
             return u
         }
 
+        /**
+         * Create a button
+         */
+
+        fun uxButton(text: String, image: String = "", action: (UxButton) -> Unit = {}): UxButton {
+            return instance.create(UxButton::class).also {
+                it.text = text
+                it.image = image
+                it.action = action
+            }
+        }
+
         fun beginTransaction() = instance.beginTransaction()
 
         fun disablesActions() = instance.disablesActions()
@@ -175,6 +200,5 @@ interface CxFactory {
         fun animate(animationDuration: Double, function: () -> Unit, completion: () -> Unit = {}) {
             instance.animate(animationDuration, function, completion)
         }
-
     }
 }
