@@ -46,8 +46,8 @@ open class FrameGroup(layout: Layout = Layout(), name: String = "") : ViewGroup(
                     (childHeight - it.layout.margins.totalHeight()).coerceAtLeast(0.0)
             )
         }
-        measuredSize.width = visibleViews.maxWidth(availableWidth).coerceAtLeast(0.0)
-        measuredSize.height = visibleViews.maxHeight(availableHeight).coerceAtLeast(0.0)
+        measuredSize.width = visibleViews.maxWidth(0.0).coerceAtLeast(0.0)
+        measuredSize.height = visibleViews.maxHeight(0.0).coerceAtLeast(0.0)
     }
 
     override fun layoutSubviews() {
