@@ -16,32 +16,10 @@
  *
  */
 
-apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'kotlin'
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-idea {
-    module {
-        inheritOutputDirs = false
-        outputDir = compileJava.destinationDir
-        testOutputDir = compileTestJava.destinationDir
-    }
-}
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-}
+ext.artifactId = "xcore"
 
 dependencies {
-    api "org.jetbrains.kotlin:kotlin-stdlib:${rootProject.ext.kotlinVersion}"
-    implementation "org.jetbrains.kotlin:kotlin-reflect:${rootProject.ext.kotlinVersion}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
     testImplementation "junit:junit:4.12"
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.10'
 }

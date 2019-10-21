@@ -1,7 +1,7 @@
-# XibFreeKt - A lightweight, code-only layout engine for RoboVm in Kotlin
-Based on XibFree by toptensoftware
+# XLayout - A lightweight, code-only layout engine for RoboVm in Kotlin
+Inspired by XibFree by toptensoftware
 
-XibFreeKt is a simple layout engine for code-only layouts in RoboVM, written in Kotlin
+XLayout is a simple layout engine for code-only layouts potentially targeting multiple frameworks, but currently only  RoboVM, written in Kotlin
 
 * Code only layouts - no more Xib files.
 * Leverages Kotlin language features to define layouts in a concise, flexible and powerful way.

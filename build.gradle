@@ -18,23 +18,132 @@
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+buildscript {
+    repositories {
+        jcenter()
+        google()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
+        classpath "digital.wup:android-maven-publish:3.6.2"
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+
+ext.artifactId = "XLayout"
+allprojects {
+    group 'com.control-j.xlayout'
+    version '1.0.0'
+
+    repositories {
+        jcenter()
+    }
+    apply plugin: "java"
+    apply plugin: "idea"
+    apply plugin: "maven-publish"
+    apply plugin: "kotlin"
+    apply plugin: "signing"
+    apply plugin: "org.jetbrains.dokka"
+
+    idea {
+        module {
+            inheritOutputDirs = false
+            outputDir = compileJava.destinationDir
+            testOutputDir = compileTestJava.destinationDir
+        }
+    }
+
+    dokka {
+        outputFormat = 'html'
+        outputDirectory = "$buildDir/dokka"
+    }
+    task sourcesJar(type: Jar) {
+        archiveClassifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar) {
+        from dokka
+        archiveClassifier = 'javadoc'
+    }
+    artifacts {
+        archives sourcesJar, javadocJar
+    }
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    publishing {
+        repositories {
+            maven {
+                def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+                def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+
+                credentials {
+                    username ossrhUsername
+                    password ossrhPassword
+                }
+            }
+        }
+
+        publications {
+            mavenJava(MavenPublication) { publication ->
+                artifactId = "${-> artifactId}"
+                from components.java
+                artifact sourcesJar
+                artifact javadocJar
+
+                pom {
+                    name = 'XLayout core'
+                    packaging 'jar'
+                    description = 'A code based layout engine'
+                    url = 'https://github.com/clydebarrow/XLayout'
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'clyde'
+                            name = 'Clyde Stubbs'
+                            url = 'https://github.com/clydebarrow'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:https://github.com/clydebarrow/XLayout.git'
+                        developerConnection = 'scm:git:https://github.com/clydebarrow/XLayout.git'
+                        url = 'https://github.com/clydebarrow/XLayout'
+                    }
+                }
+            }
+        }
+    }
+    signing {
+        sign configurations.archives
+        sign publishing.publications.mavenJava
+    }
+
+}
+
 ext {
-    kotlinVersion = '1.3.21'
-    roboelectricVersion = "3.5.1"
+    kotlinVersion = "1.3.50"
     compileSdkVersion = 28
     minSdkVersion = 21
     supportLibVersion = "28.0.0"
-    roboVMVersion = "2.3.5"
+    roboVMVersion = "2.3.7"
     rxJavaVersion = "2.1.14"
     rxKotlinVersion = "2.2.0"
     retrofitVersion = "2.3.0"
     gsonVersion = "2.8.5"
-    daggerVersion = "2.11"
-    multidexLibVersion = "1.0.3"
     jsoupVersion = "1.11.1"
     dropboxVersion = "3.0.7"
     espressoVersion = "3.0.1"
-    mapboxVersion = "6.8.1"
     mapboxLocationLayerVersion = "0.10.0"
     acraVersion = "5.1.3"
     rxAndroidVersion = "2.0.1"
@@ -51,30 +160,3 @@ ext {
     detektVersion = "1.0.0-RC14"
     jacksonVersion = "2.7.2"
 }
-buildscript {
-    ext.kotlinVersion = '1.3.21'
-    ext.detektVersion = "1.0.0-RC14"
-    repositories {
-        jcenter()
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}
-allprojects {
-    task downloadDependencies() {
-        description 'Download all dependencies to the Gradle cache'
-        doLast {
-            configurations.findAll { it.canBeResolved }.files
-        }
-    }
-}
-
