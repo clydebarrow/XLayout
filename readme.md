@@ -1,6 +1,7 @@
 # XLayout - A lightweight, code-only layout engine for RoboVm in Kotlin
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.control-j.xlayout/core/badge.png)](https://maven-badges.herokuapp.com/maven-central/com.control-j.xlayout/core/badge.png)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.control-j.xlayout/xcore/badge.png)](https://maven-badges.herokuapp.com/maven-central/com.control-j.xlayout/xcore/badge.png)
+
 Inspired by XibFree by toptensoftware
 
 XLayout is a simple layout engine for code-only layouts potentially targeting multiple frameworks, but currently only  RoboVM, written in Kotlin
