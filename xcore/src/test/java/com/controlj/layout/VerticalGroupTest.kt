@@ -47,8 +47,10 @@ class VerticalGroupTest {
         layout.add(MockUxView(0.0, 100.0, Layout(widthMode = Layout.Mode.MatchParent)))
         val screenbounds = MockUxScreen.mainScreen.bounds
         layout.onMeasure(screenbounds.width, screenbounds.height)
+        layout.frame = screenbounds
+        layout.layoutSubviews()
         assertEquals(100.0, layout.measuredSize.height, 0.0)
-        assertEquals(screenbounds.width, layout.measuredSize.width, 0.0)
+        assertEquals(screenbounds.width, layout.childViews.first().frame.width, 0.0)
     }
 
     @Test

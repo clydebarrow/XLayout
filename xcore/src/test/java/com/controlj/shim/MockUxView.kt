@@ -20,6 +20,8 @@ package com.controlj.shim
 
 import com.controlj.layout.Layout
 import com.controlj.layout.ViewGroup
+import com.controlj.layout.View.Event
+import com.controlj.layout.View
 
 open class MockUxView(width: Double = 0.0, height: Double = 0.0, override var layout: Layout = Layout(), override var name: String = "MockUxView") : UxView {
     override var row: Int = 0
@@ -27,6 +29,7 @@ open class MockUxView(width: Double = 0.0, height: Double = 0.0, override var la
     override var parent: ViewGroup? = null
     override var measuredSize: CxSize = MockCxSize()
     override var gone: Boolean = false
+    override val events: Set<View.Event> = setOf()
 
     var superView: MockUxView? = null
     val subViews = mutableListOf<UxView>()
@@ -45,7 +48,6 @@ open class MockUxView(width: Double = 0.0, height: Double = 0.0, override var la
     override var visible: Boolean = true
 
     override var intrinsicSize: CxSize = MockCxSize(width, height)
-    override var autoresizingMask: Long = 0
     override var backgroundColor: UxColor = MockUxColor(0.0, 0.0, 0.0, 0.0)
     override val layer: CxLayer = MockCxLayer()
     override var frame: CxRect = MockCxRect()

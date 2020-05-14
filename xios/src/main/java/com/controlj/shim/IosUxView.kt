@@ -19,10 +19,11 @@
 package com.controlj.shim
 
 import com.controlj.layout.Layout
+import com.controlj.layout.View
 import com.controlj.layout.ViewGroup
 import org.robovm.apple.coregraphics.CGSize
+import org.robovm.apple.uikit.UITapGestureRecognizer
 import org.robovm.apple.uikit.UIView
-import org.robovm.apple.uikit.UIViewAutoresizing
 
 open class IosUxView(
         val uiview: UIView = UIView(),
@@ -56,16 +57,12 @@ open class IosUxView(
         }
     override val layer: CxLayer
         get() = IosCxLayer(uiview.layer)
+    override var events: Set<View.Event> = setOf()
     override var frame: CxRect
         get() = IosCxRect(uiview.frame)
         set(value) {
             value as IosCxRect
             uiview.frame = value.cgRect
-        }
-    override var autoresizingMask: Long
-        get() = uiview.autoresizingMask.value()
-        set(value) {
-            uiview.autoresizingMask = UIViewAutoresizing(value)
         }
     override var visible: Boolean
         get() = !uiview.isHidden

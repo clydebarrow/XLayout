@@ -18,12 +18,12 @@
 
 package com.controlj.layout
 
+import com.controlj.shim.CxPoint
 import com.controlj.shim.CxRect
 import com.controlj.shim.CxSize
 
 /**
  * Abstract base class for any item in the layout view hierarchy
- * @param layout The layout parameters for this view. The default is to wrap content
  */
 interface View : ViewStateListener {
     companion object {
@@ -31,18 +31,27 @@ interface View : ViewStateListener {
         // replace this with a logger destination
     }
 
+    /**
+     * Enumerates the events a view might listen for
+     */
+    enum class Event {
+        TAP,
+        PRESS,      // i.e. long tap
+        DOUBLE_TAP,
+        TOUCH,
+        FLING,
+        ZOOM
+    }
 
-    val indent: Int
-        get() {
-            var i: Int = 0
-            var next = parent
-            while (next != null) {
-                i++
-                next = next.parent
-            }
-            return i
-        }
+    /**
+     * The set of events this view would like passed to it.
+     */
 
+    val events: Set<Event>
+
+    /**
+     * the layout for this view.
+     */
     var layout: Layout
     /**
      * The frame of this layout. Assigning to this * will layout the view and its subviews.
@@ -97,21 +106,85 @@ interface View : ViewStateListener {
      */
     var visible: Boolean
 
-    override fun onShown() {
-    }
+    override fun onShown() = Unit
 
-    override fun onHidden() {
-    }
+    override fun onHidden() = Unit
+
+    /**
+     * Post a tap on this view. Returns true if the view handled the tap, otherwise it will
+     * be passed up to its parent
+     *
+     * @param position
+     * @return true if tap has been consumed
+     */
+    fun onTap(position: CxPoint): Boolean = false
+
+    /**
+     * Post a double tap on this view. Returns true if the view handled the tap, otherwise it will
+     * be passed up to its parent. Note that onTap will already have been called before this one
+     *
+     * @param position
+     * @return true if tap has been consumed
+     */
+    fun onDoubleTap(position: CxPoint): Boolean = false
+
+    /**
+     * Deliver a long press event to the view. This will be called twice - once
+     * when the gesture is first recognised, once when it ends
+     *
+     * @param position The position of the press
+     * @param ended True if the gesture has ended
+     */
+    fun onPress(position: CxPoint, ended: Boolean): Boolean = false
+
+    /**
+     * Deliver a touch event to the view. This is intended to allow data to be highlighted
+     * e.g. to show what is about to be dragged etc.
+     *
+     * @param position The position of the touch
+     * @param down True if the finger is down
+     */
+    fun onTouch(position: CxPoint, down: Boolean) = Unit
+
+    /**
+     * Deliver a fling event to the view.
+     *
+     * @param position The starting position of the fling gesture
+     * @param velocityX The x velocity in pixels/second
+     * @param velocityY The y velocity in pixels/second
+     * @return true if the gesture was consumed
+     */
+    fun onFling(position: CxPoint, velocityX: Double, velocityY: Double): Boolean = false
+
+    /**
+     * Deliver a zoom (pinch) gesture. Values delivered are cumulative
+     *
+     * @param position The center position of the gesture
+     * @param deltaX The x scale of the zoom since the last call to this function
+     * @param deltaY The y scale of the zoom since the last call to this function
+     */
+    fun onZoom(position: CxPoint, deltaX: Double, deltaY: Double): Boolean = false
 
     /**
      * Layout the subviews.
      */
 
-    fun layoutSubviews() {
-
-    }
+    fun layoutSubviews() = Unit
 
     fun debugString(): String {
         return "$name: frame=$frame, measured=$measuredSize, layout=$layout"
     }
+
+    // pretty-print indent for debug purposes.
+    val indent: Int
+        get() {
+            var i = 0
+            var next = parent
+            while (next != null) {
+                i++
+                next = next.parent
+            }
+            return i
+        }
+
 }

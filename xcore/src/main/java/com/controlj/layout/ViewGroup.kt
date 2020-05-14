@@ -20,6 +20,7 @@ package com.controlj.layout
 
 import com.controlj.shim.CxFactory
 import com.controlj.shim.CxLayer
+import com.controlj.shim.CxPoint
 import com.controlj.shim.CxRect
 import com.controlj.shim.CxSize
 import com.controlj.shim.UxColor
@@ -56,6 +57,9 @@ abstract class ViewGroup(override var layout: Layout = Layout(), private var vie
      * A tag that identifies this view
      */
     var tag: Long = 0
+
+    override var events: Set<View.Event> = setOf()
+        get() = field + childViews.flatMap { it.events }
 
     override var frame: CxRect = CxFactory.cxRect()
         set(value) {
@@ -180,7 +184,27 @@ abstract class ViewGroup(override var layout: Layout = Layout(), private var vie
     open fun dividerLayout(thickness: Double): Layout = Layout.layout { name = "Divider" }
 
     override fun debugString(): String {
-        val prefix =  super.debugString()
+        val prefix = super.debugString()
         return childViews.map { it.debugString() }.joinToString("\n", "$prefix: {\n", "}")
+    }
+
+    override fun onTap(position: CxPoint): Boolean {
+        if (childViews.find { it.frame.contains(position) }?.onTap(position) == true) return true
+        return onTap(position)
+    }
+
+    override fun onDoubleTap(position: CxPoint): Boolean {
+        if (childViews.find { it.frame.contains(position) }?.onDoubleTap(position) == true) return true
+        return onDoubleTap(position)
+    }
+
+    override fun onPress(position: CxPoint, ended: Boolean): Boolean {
+        if (childViews.find { it.frame.contains(position) }?.onPress(position, ended) == true) return true
+        return onPress(position, ended)
+    }
+
+    override fun onZoom(position: CxPoint, deltaX: Double, deltaY: Double): Boolean {
+        if (childViews.find { it.frame.contains(position) }?.onZoom(position, deltaX, deltaY) == true) return true
+        return onZoom(position, deltaX, deltaY)
     }
 }

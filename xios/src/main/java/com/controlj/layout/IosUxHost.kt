@@ -22,17 +22,25 @@ import com.controlj.logging.CJLogView.logMsg
 import com.controlj.shim.CxLayer
 import com.controlj.shim.CxRect
 import com.controlj.shim.IosCxLayer
+import com.controlj.shim.IosCxPoint
 import com.controlj.shim.IosCxRect
 import com.controlj.shim.IosCxSize
 import com.controlj.shim.IosUxView
 import com.controlj.shim.UxView
 import com.controlj.shim.asUxEdgeInsets
+import org.robovm.apple.coregraphics.CGPoint
 import org.robovm.apple.coregraphics.CGSize
 import org.robovm.apple.foundation.NSOperatingSystemVersion
 import org.robovm.apple.foundation.NSProcessInfo
+import org.robovm.apple.uikit.UIGestureRecognizerState
 import org.robovm.apple.uikit.UILayoutFittingSize
 import org.robovm.apple.uikit.UILayoutPriority
+import org.robovm.apple.uikit.UILongPressGestureRecognizer
+import org.robovm.apple.uikit.UIPinchGestureRecognizer
+import org.robovm.apple.uikit.UITapGestureRecognizer
 import org.robovm.apple.uikit.UIView
+import kotlin.math.abs
+import kotlin.math.sqrt
 
 /**
  * IosUxHost is the native UIView that hosts that Ux layout
@@ -40,11 +48,7 @@ import org.robovm.apple.uikit.UIView
  */
 
 open class IosUxHost(vararg views: View) : UIView(), UxHost {
-    final override val frameGroup: FrameGroup = FrameGroup()
-
-    init {
-        views.forEach { frameGroup.add(it) }
-    }
+    final override val frameGroup: FrameGroup = FrameGroup().apply { views.forEach { add(it) } }
 
     /**
      * An enclosing [FrameGroup] to allow the child view's margins and gravity to be respected.
@@ -76,14 +80,11 @@ open class IosUxHost(vararg views: View) : UIView(), UxHost {
         )
     }
 
-    override fun getIntrinsicContentSize(): CGSize {
-        return super.getIntrinsicContentSize()
-    }
-
     override fun layoutSubviews() {
         logMsg(frameGroup, "in layoutSubviews, frame =$frame")
-        if(frame.isEmpty)
+        if (frame.isEmpty)
             return
+        updateRecognizers()
         val subViewPosition = (
                 when {
                     isIos11 -> bounds.applyInsets(safeAreaInsets.asUxEdgeInsets())
@@ -96,13 +97,71 @@ open class IosUxHost(vararg views: View) : UIView(), UxHost {
         frameGroup.onShown()
     }
 
+    private val tapRecognizer by lazy {
+        UITapGestureRecognizer {
+            frameGroup.onTap(IosCxPoint(it.getLocationInView(this)))
+        }
+    }
+
+    private val pressRecognizer by lazy {
+        UILongPressGestureRecognizer {
+            when(it.state) {
+                UIGestureRecognizerState.Began -> frameGroup.onPress(IosCxPoint(it.getLocationInView(this)), false)
+                UIGestureRecognizerState.Ended -> frameGroup.onPress(IosCxPoint(it.getLocationInView(this)), true)
+                else -> Unit
+            }
+        }
+    }
+
+    private val doubleTapRecognizer by lazy {
+        UITapGestureRecognizer {
+            frameGroup.onDoubleTap(IosCxPoint(it.getLocationInView(this)))
+        }.apply { numberOfTapsRequired = 2 }
+    }
+
+    private val zoomRecognizer by lazy {
+        UIPinchGestureRecognizer { recognizer ->
+            recognizer as UIPinchGestureRecognizer
+            if (recognizer.numberOfTouches == 2L) when (recognizer.state) {
+                UIGestureRecognizerState.Began,
+                UIGestureRecognizerState.Changed -> {
+                    val scale = recognizer.scale - 1
+                    recognizer.scale = 1.0
+                    val point0 = recognizer.getLocationOfTouch(0, this)
+                    val point1 = recognizer.getLocationOfTouch(1, this)
+                    val dy = abs(point1.y - point0.y)
+                    val dx = abs(point1.x - point0.x)
+                    val hippo = sqrt(dy * dy + dx * dx)
+                    val center = IosCxPoint(CGPoint((point1.x + point0.x) / 2, (point1.y + point0.y) / 2))
+                    frameGroup.onZoom(center, 1 + scale * dx / hippo, 1 + scale * dy / hippo)
+                }
+                else -> Unit
+            }
+        }
+    }
+
+    private fun updateRecognizers() {
+        gestureRecognizers?.forEach { removeGestureRecognizer(it) }
+        frameGroup.events.forEach {
+            when (it) {
+                View.Event.TAP -> addGestureRecognizer(tapRecognizer)
+                View.Event.PRESS -> addGestureRecognizer(pressRecognizer)
+                View.Event.DOUBLE_TAP -> addGestureRecognizer(doubleTapRecognizer)
+                View.Event.TOUCH -> TODO()
+                View.Event.FLING -> TODO()
+                View.Event.ZOOM -> addGestureRecognizer(zoomRecognizer)
+            }
+        }
+    }
+
     override fun willMoveToSuperview(superView: UIView?) {
         super.willMoveToSuperview(superView)
         if (superView == null) {
             frameGroup.onDetach()
             frameGroup.onHidden()
-        }
-        else {
+            gestureRecognizers?.forEach { removeGestureRecognizer(it) }
+
+        } else {
             frameGroup.onAttach(this)
         }
     }

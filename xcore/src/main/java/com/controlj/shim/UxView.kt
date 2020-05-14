@@ -24,6 +24,9 @@ import com.controlj.layout.Layout
 import com.controlj.layout.View
 import com.controlj.layout.asDim
 
+/**
+ * An interface implemented by platform-specific views.
+ */
 interface UxView : CxBase, View {
 
     fun removeFromSuperview()
@@ -33,7 +36,6 @@ interface UxView : CxBase, View {
     val layer: CxLayer
     val bounds: CxRect
         get() = CxFactory.cxRect(CxFactory.cxPoint(), frame.size)
-    var autoresizingMask: Long
 
     /**
      * Called when this view is to be added to its parent

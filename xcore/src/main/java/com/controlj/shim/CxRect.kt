@@ -27,8 +27,8 @@ package com.controlj.shim
  * Time: 16:51
  */
 interface CxRect : CxBase {
-    var origin: CxPoint
-    var size: CxSize
+    var origin: CxPoint     // the origin of this rectangle
+    var size: CxSize        // the size of this rectangle
 
     val maxX: Double
         get() = origin.x + size.width
@@ -52,4 +52,14 @@ interface CxRect : CxBase {
         set(value) {
             size.height = value
         }
+
+    /**
+     * Does this rectangle contain the point?
+     * @param point The point of interest
+     * @return true if the point is inside this rectangle
+     */
+    fun contains(point: CxPoint): Boolean {
+        return point.x >= minX && point.x < maxX &&
+                point.y >= minY && point.y < maxY
+    }
 }

@@ -41,5 +41,4 @@ class IosUxButton(
     init {
         uiButton.addOnTouchUpInsideListener { _, _ -> action(this) }
     }
-
 }

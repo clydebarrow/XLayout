@@ -45,7 +45,7 @@ fun List<View>.maxHeight(dflt: Double): Double {
 }
 
 fun List<View>.maxWidth(dflt: Double): Double {
-    // find the maximum height
+    // find the maximum width
     return this.map { subView ->
         when (subView.layout.widthMode) {
             Layout.Mode.Absolute -> subView.layout.width + subView.layout.margins.totalWidth()

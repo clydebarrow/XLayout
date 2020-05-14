@@ -49,5 +49,4 @@ interface UxHost {
      * Add the [subView] to this host's view
      */
     fun addSubview(subView: UxView)
-
 }
