@@ -115,7 +115,7 @@ class Checkbox(var width: Double = 20.0, var height: Double = 20.0) : UIControl(
         touchFrame = bounds.inset(touchInsets)
     }
 
-    override fun isPointInside(point: CGPoint, event: UIEvent): Boolean {
+    override fun isPointInside(point: CGPoint, event: UIEvent?): Boolean {
         return touchFrame.contains(point)
     }
 }

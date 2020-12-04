@@ -43,30 +43,45 @@ import kotlin.math.abs
 import kotlin.math.sqrt
 
 /**
- * IosUxHost is the native UIView that hosts that Ux layout
+ * IosUxHost is the native UIView that hosts that Ux layout.
  * It inserts a FrameGroup under the single child, thus respecting the child's margins and gravity.
+ * @param views An initial list of childviews to add
  */
 
 open class IosUxHost(vararg views: View) : UIView(), UxHost {
-    final override val frameGroup: FrameGroup = FrameGroup().apply { views.forEach { add(it) } }
 
     /**
      * An enclosing [FrameGroup] to allow the child view's margins and gravity to be respected.
      */
+    final override val frameGroup: FrameGroup = FrameGroup().apply { views.forEach { add(it) } }
 
+    /**
+     * The bounds of the view. Returns a [CxRect].
+     */
     override val bounds: CxRect
         get() = IosCxRect(getBounds())
 
+    /**
+     * Add a sublayer to the view.
+     * @param subLayer The sublayer to add
+     */
     override fun addSublayer(subLayer: CxLayer) {
         subLayer as IosCxLayer
         layer.addSublayer(subLayer.caLayer)
     }
 
+    /**
+     * Add a child view.
+     * @param subView The child view to add
+     */
     override fun addSubview(subView: UxView) {
         subView as IosUxView
         addSubview(subView.uiview)
     }
 
+    /**
+     * Overrides the iOS native function to return the size of the view.
+     */
     override fun getSystemLayoutSizeFittingSize(size: CGSize, p1: Float, p2: Float): CGSize {
         frameGroup.onMeasure(size.width, size.height)
         return (frameGroup.measuredSize as IosCxSize).cgSize
@@ -80,6 +95,10 @@ open class IosUxHost(vararg views: View) : UIView(), UxHost {
         )
     }
 
+    /**
+     * Layout the child views - overrides the iOS native method.
+     * The framegroup will occupy all of the view
+     */
     override fun layoutSubviews() {
         logMsg(frameGroup, "in layoutSubviews, frame =$frame")
         if (frame.isEmpty)
@@ -97,6 +116,9 @@ open class IosUxHost(vararg views: View) : UIView(), UxHost {
         frameGroup.onShown()
     }
 
+    /**
+     * The following [UIGestureRecognizer]s will pass actions to subviews.
+     */
     private val tapRecognizer by lazy {
         UITapGestureRecognizer {
             frameGroup.onTap(IosCxPoint(it.getLocationInView(this)))

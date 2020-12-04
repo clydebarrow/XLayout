@@ -41,7 +41,7 @@ fun List<View>.maxHeight(dflt: Double): Double {
             Layout.Mode.WrapContent -> subView.measuredSize.height + subView.layout.margins.totalHeight()
             Layout.Mode.Weighted -> error("Weighted height inside horizontalGroup")
         }
-    }.max() ?: dflt
+    }.maxOrNull() ?: dflt
 }
 
 fun List<View>.maxWidth(dflt: Double): Double {
@@ -53,7 +53,7 @@ fun List<View>.maxWidth(dflt: Double): Double {
             Layout.Mode.WrapContent -> subView.measuredSize.width + subView.layout.margins.totalWidth()
             Layout.Mode.Weighted -> error("Weighted width inside VerticalGroup")
         }
-    }.max() ?: dflt
+    }.maxOrNull() ?: dflt
 }
 
 fun CxSize.asSizeString(): String {
